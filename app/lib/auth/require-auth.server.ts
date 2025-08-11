@@ -18,6 +18,7 @@ export async function getUser(request: Request) {
 /** Require an authenticated user or redirect to /login */
 export async function requireAuth(request: Request) {
     const user = await getUser(request);
+    console.log(user);
     if (!user) throw redirect("/login");
     return user;
 }

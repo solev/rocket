@@ -15,6 +15,30 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+
+  /* Subtle float animation for hero preview */
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  /* Reveal-on-scroll utilities */
+  .reveal-stagger {
+    --stagger: 80ms;
+  }
+  .reveal-child {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 700ms ease, transform 700ms ease;
+    will-change: opacity, transform;
+  }
+  .group[data-visible="true"] .reveal-child {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @theme inline {

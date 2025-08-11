@@ -15,14 +15,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export function meta() {
   return [
-    { title: "Your SaaS - Modern Infrastructure" },
+    { title: "Rocket - SaaS & AI Starter Kit" },
     {
       name: "description",
-      content: "Build, deploy, and scale with confidence.",
+      content: "Build, deploy, and scale SaaS and AI MVPs 10× faster with Rocket starter kit.",
     },
   ];
 }
-
 // Placeholder sections; later replace with 21st.dev component imports.
 export default function LandingPage() {
   const { user } = useLoaderData<typeof loader>();
@@ -33,6 +32,7 @@ export default function LandingPage() {
     >
       {/* Ocean Abyss Background with Top Glow (dark mode only) */}
       <div className="absolute inset-0 z-0 hidden dark:block pointer-events-none dark:bg-black bg-ocean-abyss" />
+      
       {/* Foreground content */}
       <div className="relative z-10 flex flex-col min-h-dvh scroll-smooth">
         <NavBar user={user} />
@@ -62,10 +62,38 @@ function Section({
   children: React.ReactNode;
   className?: string;
 }) {
+  const ref = React.useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            // Animate once; stop observing to avoid reflows
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <section
+      ref={ref}
       id={id}
-      className={"px-4 md:px-8 lg:px-12 py-16 md:py-24 " + className}
+      data-visible={visible ? "true" : "false"}
+      className={
+        "group px-4 md:px-8 lg:px-12 py-16 md:py-24 transform-gpu transition-all motion-reduce:transition-none duration-700 ease-out " +
+        (visible ? "opacity-100 translate-y-0 " : "opacity-0 translate-y-6 ") +
+        (className ? className : "")
+      }
     >
       <div className="mx-auto w-full max-w-6xl">{children}</div>
     </section>
@@ -118,7 +146,10 @@ function NavBar({ user }: { user: any }) {
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur border-b bg-background/70 supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 items-center gap-6 px-4 md:px-8 max-w-6xl">
-        <div className="font-semibold tracking-tight">YourSaaS</div>
+        <div className="flex items-center gap-2">
+          <img src="/rocket-logo.svg" alt="Rocket" className="h-6 w-6" />
+          <span className="font-semibold tracking-tight">Rocket</span>
+        </div>
         <nav className="hidden md:flex gap-1 text-sm">
           {sections.map(({ label, href }) => {
             const isActive = active && href === `#${active}`;
@@ -166,19 +197,19 @@ function NavBar({ user }: { user: any }) {
 
 function Hero() {
   return (
-    <Section id="hero" className="pt-24 md:pt-32 pb-12 text-center">
+  <Section id="hero" className="pt-24 md:pt-32 pb-12 text-center relative overflow-hidden">
+      {/* Light-mode Dreamy Sky Pink Glow (scoped to hero) */}
+      <div className="absolute inset-0 -z-10 dark:hidden pointer-events-none bg-dreamy-sky" />
       <div className="mx-auto max-w-3xl space-y-7">
         <p className="text-xs font-medium uppercase tracking-wider text-primary/80 flex items-center justify-center gap-2">
           <span className="inline-block h-2 w-2 rounded-full bg-primary animate-pulse" />
           Trusted by 2,000+ engineering & ops teams
         </p>
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-foreground to-foreground/70 text-transparent bg-clip-text">
-          Ship infrastructure-heavy SaaS 10× faster
+          Ship SaaS & AI MVPs 10× faster with Rocket
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
-          Abstract away auth, multi-tenant data, rate limits, billing events &
-          auditable actions—focus every sprint on what differentiates your
-          product.
+          Complete starter kit with auth, multi-tenant data, billing, and AI integration. From idea to production in days, not months.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
           <Button asChild size="lg" className="px-7">
@@ -188,7 +219,7 @@ function Hero() {
             <Link to="/login">Book Demo</Link>
           </Button>
         </div>
-        <div className="mt-10 aspect-video w-full rounded-xl border bg-gradient-to-br from-muted to-muted/30 relative overflow-hidden">
+  <div className="mt-10 aspect-video w-full rounded-xl border bg-gradient-to-br from-muted to-muted/30 relative overflow-hidden will-change-transform animate-float-slow">
           <div className="absolute inset-0 grid place-items-center text-xs text-muted-foreground">
             Product Preview Placeholder
           </div>
@@ -235,11 +266,11 @@ function Features() {
         title="Features"
         subtitle="Each block removes a week of boilerplate."
       />
-      <div className="mt-12 grid gap-6 md:grid-cols-2">
+  <div className="mt-12 grid gap-6 md:grid-cols-2 reveal-stagger">
         {list.map((f, i) => (
           <div
             key={f.title}
-            className="group rounded-xl border p-6 bg-card/40 hover:bg-card transition-colors relative overflow-hidden"
+    className="group rounded-xl border p-6 bg-card/40 hover:bg-card transition-colors relative overflow-hidden reveal-child"
           >
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-gradient-to-br from-primary/5 to-primary/0" />
             <div className="flex items-start gap-4">
@@ -267,9 +298,9 @@ function OutcomesStats() {
   const stats = ["55%", "55%", "55%", "55%", "55%"];
   return (
     <Section id="outcomes" className="pt-0">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center reveal-stagger">
         {stats.map((s, i) => (
-          <div key={i} className="space-y-2">
+      <div key={i} className="space-y-2 reveal-child">
             <div className="text-2xl font-semibold">{s}</div>
             <p className="text-xs text-muted-foreground">Data {i + 1}</p>
           </div>
@@ -300,11 +331,11 @@ function HowItWorks() {
         title="How It Works"
         subtitle="Three steps—production ready from day one."
       />
-      <ol className="mt-12 grid gap-6 md:grid-cols-3 list-none counter-reset:step">
+  <ol className="mt-12 grid gap-6 md:grid-cols-3 list-none counter-reset:step reveal-stagger">
         {steps.map((s, i) => (
           <li
             key={s.title}
-            className="relative rounded-xl border p-6 flex flex-col gap-3 bg-card/40"
+    className="relative rounded-xl border p-6 flex flex-col gap-3 bg-card/40 reveal-child"
           >
             <div className="h-9 w-9 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
               {i + 1}
@@ -331,9 +362,9 @@ function WhyChoose() {
         title="Why Choose Us"
         subtitle="Make your strengths obvious."
       />
-      <div className="mt-10 grid gap-6 md:grid-cols-4">
+    <div className="mt-10 grid gap-6 md:grid-cols-4 reveal-stagger">
         {points.map((p, i) => (
-          <div key={i} className="rounded-xl border p-6 space-y-3">
+      <div key={i} className="rounded-xl border p-6 space-y-3 reveal-child">
             <div className="h-8 w-8 rounded-full bg-primary/10" />
             <h3 className="font-medium">{p}</h3>
             <p className="text-xs text-muted-foreground">
@@ -353,9 +384,9 @@ function Integrations() {
         title="Integrations"
         subtitle="It plays nice with your stack."
       />
-      <div className="mt-10 grid grid-cols-3 md:grid-cols-6 gap-8 place-items-center opacity-70">
+      <div className="mt-10 grid grid-cols-3 md:grid-cols-6 gap-8 place-items-center opacity-70 reveal-stagger">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-8 w-24 rounded bg-muted" />
+          <div key={i} className="h-8 w-24 rounded bg-muted reveal-child" />
         ))}
       </div>
     </Section>
@@ -369,9 +400,9 @@ function Testimonials() {
         title="What Customers Say"
         subtitle="Users can sell your product better than you."
       />
-      <div className="mt-10 grid gap-6 md:grid-cols-3 lg:grid-cols-5">
+      <div className="mt-10 grid gap-6 md:grid-cols-3 lg:grid-cols-5 reveal-stagger">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="rounded-xl border p-6 space-y-3 bg-card/50">
+          <div key={i} className="rounded-xl border p-6 space-y-3 bg-card/50 reveal-child">
             <div className="flex gap-1">
               {Array.from({ length: 5 }).map((_, r) => (
                 <div key={r} className="h-3 w-3 rounded-full bg-yellow-400" />
@@ -462,17 +493,15 @@ function Pricing() {
           Annual (save ~30%)
         </span>
       </div>
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <div className="mt-10 grid gap-6 md:grid-cols-3 reveal-stagger">
         {tiers.map((t) => {
           const price = annual ? t.annual : t.monthly;
           return (
             <div
               key={t.name}
               className={
-                "rounded-xl border p-6 flex flex-col gap-5 bg-card/40 " +
-                (t.highlight
-                  ? "border-primary shadow-sm relative ring-1 ring-primary/20"
-                  : "")
+                "rounded-xl border p-6 flex flex-col gap-5 bg-card/40 reveal-child " +
+                (t.highlight ? "border-primary shadow-sm relative ring-1 ring-primary/20" : "")
               }
             >
               {t.highlight && (
@@ -527,12 +556,9 @@ function FAQ() {
         title="FAQ"
         subtitle="Handle objections before they happen."
       />
-      <div className="mt-8 space-y-3">
+    <div className="mt-8 space-y-3 reveal-stagger">
         {faqs.map((q, i) => (
-          <details
-            key={i}
-            className="group rounded-lg border p-4 [&_summary::-webkit-details-marker]:hidden"
-          >
+      <details key={i} className="group rounded-lg border p-4 [&_summary::-webkit-details-marker]:hidden reveal-child">
             <summary className="flex cursor-pointer items-center justify-between text-sm font-medium">
               {q}
               <span className="transition-transform group-open:rotate-45">
@@ -553,8 +579,8 @@ function FAQ() {
 function BottomCTA() {
   return (
     <Section id="cta" className="pt-0">
-      <div className="grid gap-8 md:grid-cols-2 items-center">
-        <div className="space-y-4">
+      <div className="grid gap-8 md:grid-cols-2 items-center reveal-stagger">
+        <div className="space-y-4 reveal-child">
           <h2 className="text-2xl md:text-3xl font-semibold">CTA Heading</h2>
           <p className="text-muted-foreground text-sm md:text-base">
             Reiterate the core value in a distinct way—then guide users to take
@@ -563,19 +589,19 @@ function BottomCTA() {
           <div className="flex gap-3 pt-2">
             <Link
               to="/login"
-              className="inline-flex items-center rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
+              className="inline-flex items-center rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 reveal-child"
             >
               Primary CTA
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center rounded-md border px-5 py-2 text-sm font-medium hover:bg-accent"
+              className="inline-flex items-center rounded-md border px-5 py-2 text-sm font-medium hover:bg-accent reveal-child"
             >
               Secondary CTA
             </Link>
           </div>
         </div>
-        <div className="aspect-video w-full rounded-xl border bg-muted" />
+        <div className="aspect-video w-full rounded-xl border bg-muted reveal-child" />
       </div>
     </Section>
   );

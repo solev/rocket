@@ -1,5 +1,3 @@
-"use client"
-
 import { ChevronRight, type LucideIcon } from "lucide-react"
 import { NavLink, useLocation } from "react-router"
 
@@ -44,6 +42,7 @@ export function NavMain({
             return (
               <SidebarMenuItem key={item.title}>
                 <NavLink
+                  prefetch="intent"
                   to={item.url}
                   end
                   className={({ isActive, isPending }) =>
@@ -92,6 +91,7 @@ export function NavMain({
                           <NavLink
                             to={subItem.url}
                             end
+                            prefetch="intent"
                             className={({ isActive, isPending }) =>
                               [
                                 "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden transition hover:underline",
