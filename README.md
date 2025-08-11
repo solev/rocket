@@ -1,4 +1,4 @@
-# Welcome to React Router!
+# Welcome to React Router
 
 A modern, production-ready template for building full-stack React applications using React Router.
 
@@ -33,6 +33,41 @@ npm run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
+
+### Local Postgres (Docker)
+
+A `docker-compose.yml` is provided for a local Postgres 16 instance.
+
+Quick start:
+
+```bash
+# Start database (detached)
+npm run db:up
+
+# Watch logs (optional)
+npm run db:logs
+
+# Apply latest migrations (ensure DATABASE_URL in .env)
+npm run db:migrate
+
+# Open psql shell
+npm run db:psql
+
+# Stop and remove containers
+npm run db:down
+```
+
+Default credentials (see `docker-compose.yml`):
+
+```text
+host: localhost
+port: 5432
+user: postgres
+password: postgres
+database: rr7_test
+```
+
+Ensure `.env` contains the matching `DATABASE_URL` (see `.env.example`).
 
 ## Building for Production
 
@@ -70,7 +105,7 @@ If you're familiar with deploying Node applications, the built-in app server is 
 
 Make sure to deploy the output of `npm run build`
 
-```
+```text
 ├── package.json
 ├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
 ├── build/
