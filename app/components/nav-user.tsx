@@ -6,7 +6,7 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react"
-import { useSubmit } from "react-router"
+import { useSubmit, useNavigate } from "react-router"
 
 import {
   Avatar,
@@ -40,6 +40,7 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const submit = useSubmit()
+  const navigate = useNavigate()
 
   return (
     <SidebarMenu>
@@ -88,11 +89,21 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault()
+                  navigate("/dashboard/settings")
+                }}
+              >
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault()
+                  navigate("/dashboard/billing")
+                }}
+              >
                 <CreditCard />
                 Billing
               </DropdownMenuItem>

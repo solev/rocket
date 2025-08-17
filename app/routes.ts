@@ -5,11 +5,13 @@ export default [
 	index("routes/_index.tsx"),
 	// Auth
 	route("login", "routes/login.tsx"),
+	route("signup", "routes/signup.tsx"),
 	// Protected dashboard with children
-	route("dashboard", "routes/dashboard-layout.tsx", [
-		index("routes/dashboard.index.tsx"),
-		route("billing", "routes/dashboard.billing.tsx"),
-		route("settings", "routes/dashboard.settings.tsx"),
+	route("dashboard", "routes/dashboard/dashboard-layout.tsx", [
+		index("routes/dashboard/dashboard.index.tsx"),
+		route("billing", "routes/dashboard/dashboard.billing.tsx"),
+		route("settings", "routes/dashboard/dashboard.settings.tsx"),
+		route("ai", "routes/ai/chat.tsx")
 	]),
 	// Logout action
 	route("logout", "routes/logout.tsx"),
@@ -19,4 +21,5 @@ export default [
 	route("polar/webhooks", "routes/polar.webhooks.tsx"),
 	// Better Auth dynamic API handler (splat)
 	route("api/auth/*", "routes/api.auth.$.tsx"),
+	route("api/chat", "routes/api/chat.tsx")
 ] satisfies RouteConfig;

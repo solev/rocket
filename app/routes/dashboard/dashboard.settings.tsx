@@ -1,13 +1,12 @@
 import React, { useState, type FormEvent } from "react";
-import { authClient } from "~/lib/auth/auth.client";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import {
   useLoaderData,
   useNavigation,
   useActionData,
   Form,
+  useFormAction,
 } from "react-router";
-import { requireAuth } from "~/lib/auth/require-auth.server";
 import {
   loadGeneralSettings,
   saveGeneralSettings,
@@ -22,6 +21,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import { withAuthAction, withAuthLoader } from "~/utils/guard.server";
 
 interface GeneralSettingsState {
   orgName: string;
@@ -32,14 +32,13 @@ interface GeneralSettingsState {
   webhookUrl: string;
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireAuth(request);
+export const loader = withAuthLoader(async ({ user }) => {
+  // user is guaranteed and typed
   const settings = await loadGeneralSettings(user.id);
   return { userId: user.id, settings };
-}
+});
 
-export async function action({ request }: ActionFunctionArgs) {
-  const user = await requireAuth(request);
+export const action = withAuthAction(async ({ request, user }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData.entries());
   try {
@@ -55,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
   } catch (e: any) {
     return { ok: false, error: e.message };
   }
-}
+});
 
 export default function DashboardSettings() {
   const data = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -73,33 +72,6 @@ export default function DashboardSettings() {
   const [form, setForm] = useState<GeneralSettingsState>(initial);
   const saved = !!actionData?.ok;
   const saving = nav.state === "submitting";
-  const [subStatus, setSubStatus] = useState<"loading" | "active" | "inactive">(
-    "loading"
-  );
-  const [subError, setSubError] = useState<string | null>(null);
-
-  // Load current customer state to derive subscription status
-  React.useEffect(() => {
-    let ignore = false;
-    (async () => {
-      try {
-        const { data } = await authClient.customer.state();
-        console.log(data);
-        if (ignore) return;
-        // Polar customer state includes subscriptions under data.subscriptions (typed in SDK); fall back gracefully
-        const subs: any[] = (data as any)?.subscriptions ?? [];
-        const hasActive = subs.some((s: any) => s?.status === "active");
-        setSubStatus(hasActive ? "active" : "inactive");
-      } catch (e: any) {
-        if (!ignore)
-          setSubError(e?.message || "Failed to load subscription state");
-        setSubStatus("inactive");
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-  }, []);
 
   function handleChange<K extends keyof GeneralSettingsState>(
     key: K,
@@ -175,8 +147,6 @@ export default function DashboardSettings() {
             </div>
           </CardContent>
         </Card>
-
-  {/* Billing moved to /dashboard/billing */}
 
         <Card>
           <CardHeader>

@@ -1,6 +1,4 @@
 import { Outlet, useNavigation, useLoaderData } from "react-router";
-import type { LoaderFunctionArgs } from "react-router";
-import { requireAuth } from "~/lib/auth/require-auth.server";
 import {
   SidebarProvider,
   SidebarInset,
@@ -17,11 +15,12 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Separator } from "~/components/ui/separator";
 import { ThemeToggle } from "~/components/theme-toggle";
+import { withAuthLoader } from "~/utils/guard.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireAuth(request);
-  return user;
-}
+export const loader = withAuthLoader(async ({ user }) => {
+  // user is guaranteed and typed
+  return user; // Return user data to be used in the layout
+});
 
 export default function DashboardLayout() {
   const nav = useNavigation();
@@ -63,7 +62,7 @@ export default function DashboardLayout() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="rounded-xl border bg-background p-4">
+          <div className="rounded-xl border bg-background p-4 flex-1">
             <Outlet />
           </div>
         </div>

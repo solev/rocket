@@ -1,5 +1,5 @@
 import { Link, redirect, type LoaderFunctionArgs } from "react-router";
-import { LoginForm } from "~/components/login-form";
+import { SignupForm } from "~/components/signup-form";
 import { getUser } from "~/lib/auth/require-auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -8,7 +8,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return null;
 }
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -16,7 +16,7 @@ export default function LoginPage() {
           <img src="/rocket-logo.svg" alt="Rocket" className="h-8 w-8 md:h-9 md:w-9" />
           <span className="font-semibold tracking-tight text-lg md:text-xl">Rocket</span>
         </Link>
-        <LoginForm />
+        <SignupForm />
       </div>
     </div>
   );

@@ -13,7 +13,3 @@ export async function loader() {
   // Avoid GET usage; send to dashboard.
   throw redirect("/dashboard");
 }
-
-export default function Logout() {
-  return null;
-}
