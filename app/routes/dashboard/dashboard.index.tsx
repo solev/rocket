@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { ShouldRevalidateFunctionArgs } from "react-router";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "~/components/ui/chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer, BarChart, Bar, Line, LineChart } from "recharts";
@@ -111,6 +112,11 @@ export default function DashboardHome() {
       </Card>
     </div>
   );
+}
+
+export function shouldRevalidate({ formMethod }: ShouldRevalidateFunctionArgs) {
+  // Use prefetched data for normal GET navigations; revalidate on mutations only
+  return !!formMethod && formMethod.toUpperCase() !== "GET";
 }
 
 function MetricCard({ title, value, change, sub, positive }: { title: string; value: string; change: string; sub: string; positive?: boolean }) {

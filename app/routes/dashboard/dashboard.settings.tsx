@@ -1,4 +1,5 @@
 import React, { useState, type FormEvent } from "react";
+import type { ShouldRevalidateFunctionArgs } from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import {
   useLoaderData,
@@ -22,7 +23,6 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { withAuthAction, withAuthLoader } from "~/utils/guard.server";
-
 interface GeneralSettingsState {
   orgName: string;
   contactEmail: string;
@@ -255,4 +255,9 @@ export default function DashboardSettings() {
       </Form>
     </div>
   );
+}
+
+// Use prefetched data on normal link clicks; revalidate only on non-GET submissions
+export function shouldRevalidate({ formMethod }: ShouldRevalidateFunctionArgs) {
+  return !!formMethod && formMethod.toUpperCase() !== "GET";
 }

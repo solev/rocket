@@ -5,14 +5,10 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react"
-import { useSubmit, useNavigate } from "react-router"
+} from "lucide-react";
+import { NavLink, useSubmit } from "react-router";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "~/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,26 +17,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "~/components/ui/sidebar"
+} from "~/components/ui/sidebar";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    name: string;
+    email: string;
+    avatar: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
-  const submit = useSubmit()
-  const navigate = useNavigate()
+  const { isMobile } = useSidebar();
+  const submit = useSubmit();
 
   return (
     <SidebarMenu>
@@ -82,30 +77,26 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+              <DropdownMenuItem asChild>
+                <NavLink to="/dashboard/billing" prefetch="render">
+                  <Sparkles />
+                  Upgrade to Pro
+                </NavLink>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault()
-                  navigate("/dashboard/settings")
-                }}
-              >
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <NavLink to="/dashboard/settings" prefetch="render">
+                  <BadgeCheck />
+                  Account
+                </NavLink>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault()
-                  navigate("/dashboard/billing")
-                }}
-              >
-                <CreditCard />
-                Billing
+              <DropdownMenuItem asChild>
+                <NavLink to="/dashboard/billing" prefetch="render">
+                  <CreditCard />
+                  Billing
+                </NavLink>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />
@@ -115,8 +106,8 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={(e) => {
-                e.preventDefault()
-                submit(null, { method: "post", action: "/logout" })
+                e.preventDefault();
+                submit(null, { method: "post", action: "/logout" });
               }}
             >
               <LogOut />
@@ -126,5 +117,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

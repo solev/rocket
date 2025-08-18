@@ -1,4 +1,5 @@
 import { Outlet, useNavigation, useLoaderData } from "react-router";
+import type { ShouldRevalidateFunctionArgs } from "react-router";
 import {
   SidebarProvider,
   SidebarInset,
@@ -15,12 +16,13 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Separator } from "~/components/ui/separator";
 import { ThemeToggle } from "~/components/theme-toggle";
-import { withAuthLoader } from "~/utils/guard.server";
+import { requireAuth } from "~/lib/auth/require-auth.server";
+import type { Route } from "./+types/dashboard-layout";
 
-export const loader = withAuthLoader(async ({ user }) => {
-  // user is guaranteed and typed
-  return user; // Return user data to be used in the layout
-});
+export async function loader({ request }: Route.LoaderArgs) {
+  var user = await requireAuth(request);
+  return user;
+}
 
 export default function DashboardLayout() {
   const nav = useNavigation();
@@ -69,4 +71,9 @@ export default function DashboardLayout() {
       </SidebarInset>
     </SidebarProvider>
   );
+}
+
+export function shouldRevalidate({ formMethod }: ShouldRevalidateFunctionArgs) {
+  // Don't re-run the loader on normal GET navigations; use prefetched data.
+  return !!formMethod && formMethod.toUpperCase() !== "GET";
 }

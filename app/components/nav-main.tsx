@@ -42,7 +42,7 @@ export function NavMain({
             return (
               <SidebarMenuItem key={item.title}>
                 <NavLink
-                  prefetch="intent"
+                  prefetch="render"
                   to={item.url}
                   end
                   className={({ isActive, isPending }) =>
@@ -91,7 +91,7 @@ export function NavMain({
                           <NavLink
                             to={subItem.url}
                             end
-                            prefetch="intent"
+                            prefetch="render"
                             className={({ isActive, isPending }) =>
                               [
                                 "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden transition hover:underline",

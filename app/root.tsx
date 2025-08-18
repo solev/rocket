@@ -9,15 +9,19 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import "./app.css";
+import Progress from "./components/progress-bar";
 
 type Theme = "light" | "dark";
 const THEME_COOKIE = "theme";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(new RegExp("(?:^|; )" + THEME_COOKIE + "=([^;]+)"));
+  const match = cookie.match(
+    new RegExp("(?:^|; )" + THEME_COOKIE + "=([^;]+)")
+  );
   const raw = match ? decodeURIComponent(match[1]) : null;
-  const theme: Theme | null = raw === "dark" || raw === "light" ? (raw as Theme) : null;
+  const theme: Theme | null =
+    raw === "dark" || raw === "light" ? (raw as Theme) : null;
   return { theme };
 }
 
@@ -38,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<typeof loader>();
   const theme = data?.theme ?? null;
   return (
-  <html lang="en" className={theme === "dark" ? "dark" : undefined}>
+    <html lang="en" className={theme === "dark" ? "dark" : undefined}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,6 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Progress showSpinner={false} />
         {children}
         <ScrollRestoration />
         <Scripts />
