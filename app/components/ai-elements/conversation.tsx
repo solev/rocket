@@ -4,12 +4,12 @@ import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 import { ArrowDownIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
-export const Conversation = ({ className, ...props }: ConversationProps) => (
+export const Conversation = memo(({ className, ...props }: ConversationProps) => (
   <StickToBottom
     className={cn('relative flex-1 overflow-y-auto', className)}
     initial="smooth"
@@ -17,22 +17,26 @@ export const Conversation = ({ className, ...props }: ConversationProps) => (
     role="log"
     {...props}
   />
-);
+));
+
+Conversation.displayName = 'Conversation';
 
 export type ConversationContentProps = ComponentProps<
   typeof StickToBottom.Content
 >;
 
-export const ConversationContent = ({
+export const ConversationContent = memo(({
   className,
   ...props
 }: ConversationContentProps) => (
   <StickToBottom.Content className={cn('p-4', className)} {...props} />
-);
+));
+
+ConversationContent.displayName = 'ConversationContent';
 
 export type ConversationScrollButtonProps = ComponentProps<typeof Button>;
 
-export const ConversationScrollButton = ({
+export const ConversationScrollButton = memo(({
   className,
   ...props
 }: ConversationScrollButtonProps) => {
@@ -59,4 +63,6 @@ export const ConversationScrollButton = ({
       </Button>
     )
   );
-};
+});
+
+ConversationScrollButton.displayName = 'ConversationScrollButton';

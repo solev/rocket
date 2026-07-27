@@ -11,7 +11,7 @@ export default [
 		index("routes/dashboard/dashboard.index.tsx"),
 		route("billing", "routes/dashboard/dashboard.billing.tsx"),
 		route("settings", "routes/dashboard/dashboard.settings.tsx"),
-		route("ai", "routes/ai/chat.tsx")
+		route("ai", "routes/ai/chat.tsx"),
 	]),
 	// Logout action
 	route("logout", "routes/logout.tsx"),
@@ -21,5 +21,9 @@ export default [
 	route("polar/webhooks", "routes/polar.webhooks.tsx"),
 	// Better Auth dynamic API handler (splat)
 	route("api/auth/*", "routes/api.auth.$.tsx"),
-	route("api/chat", "routes/api/chat.tsx")
+	route("api/chat", "routes/api/chat.tsx"),
+	// Wireframe previews for Seestem
+	route("wireframes/a", "routes/wireframes/seestem-wireframe-a.tsx"),
+	route("wireframes/b", "routes/wireframes/seestem-wireframe-b.tsx"),
+	route("wireframes/c", "routes/wireframes/seestem-wireframe-c.tsx"),
 ] satisfies RouteConfig;

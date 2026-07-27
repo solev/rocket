@@ -1,32 +1,26 @@
-## ---- Base with Bun (smaller + faster installs) ----
-FROM oven/bun:1.1-alpine AS base
+FROM oven/bun AS dependencies-env
+COPY . /app
+
+FROM dependencies-env AS development-dependencies-env
+COPY ./package.json bun.lock /app/
 WORKDIR /app
+RUN bun i --frozen-lockfile
 
-## ---- Dependencies layer (leverages Bun's cache) ----
-FROM base AS deps
-# Copy only lockfiles & manifest for better layer caching
-COPY package.json bun.lock* package-lock.json* ./
-# If migrating from npm you may not yet have bun.lockb; bun will generate it.
-RUN bun install --frozen-lockfile || bun install
+FROM dependencies-env AS production-dependencies-env
+COPY ./package.json bun.lock /app/
+WORKDIR /app
+RUN bun i --production
 
-## ---- Build layer ----
-FROM base AS build
-ENV NODE_ENV=production
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+FROM dependencies-env AS build-env
+COPY ./package.json bun.lock /app/
+COPY --from=development-dependencies-env /app/node_modules /app/node_modules
+WORKDIR /app
 RUN bun run build
 
-## ---- Production runtime (copy only needed artifacts) ----
-FROM base AS runtime
-ENV NODE_ENV=production
+FROM dependencies-env
+COPY ./package.json bun.lock /app/
+COPY --from=production-dependencies-env /app/node_modules /app/node_modules
+COPY --from=build-env /app/build /app/build
 WORKDIR /app
-COPY package.json bun.lock* ./
-COPY .env ./
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/build ./build
-
-# Expose a default port (adjust if different)
-EXPOSE 3000
-
-# Start the react-router server using bun
+RUN ls
 CMD ["bun", "run", "start"]

@@ -9,21 +9,26 @@ import {
 } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
 import type { ComponentProps } from 'react';
+import { memo } from 'react';
 
 export type ActionsProps = ComponentProps<'div'>;
 
-export const Actions = ({ className, children, ...props }: ActionsProps) => (
-  <div className={cn('flex items-center gap-1', className)} {...props}>
-    {children}
-  </div>
-);
+export const Actions = memo(({ className, children, ...props }: ActionsProps) => (
+  <TooltipProvider>
+    <div className={cn('flex items-center gap-1', className)} {...props}>
+      {children}
+    </div>
+  </TooltipProvider>
+));
+
+Actions.displayName = 'Actions';
 
 export type ActionProps = ComponentProps<typeof Button> & {
   tooltip?: string;
   label?: string;
 };
 
-export const Action = ({
+export const Action = memo(({
   tooltip,
   children,
   label,
@@ -35,7 +40,7 @@ export const Action = ({
   const button = (
     <Button
       className={cn(
-        'size-9 p-1.5 text-muted-foreground hover:text-foreground',
+        'size-9 p-1.5 text-muted-foreground hover:text-foreground relative',
         className
       )}
       size={size}
@@ -50,16 +55,16 @@ export const Action = ({
 
   if (tooltip) {
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
-          <TooltipContent>
-            <p>{tooltip}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
     );
   }
 
   return button;
-};
+});
+
+Action.displayName = 'Action';

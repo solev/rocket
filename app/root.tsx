@@ -10,7 +10,6 @@ import {
 import { Analytics } from '@vercel/analytics/react';
 import type { Route } from "./+types/root";
 import "./app.css";
-import Progress from "./components/progress-bar";
 
 type Theme = "light" | "dark";
 const THEME_COOKIE = "theme";
@@ -52,7 +51,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Analytics />
-        <Progress showSpinner={false} />
         {children}
         <ScrollRestoration />
         <Scripts />

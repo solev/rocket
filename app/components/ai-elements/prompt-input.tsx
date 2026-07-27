@@ -17,11 +17,11 @@ import type {
   HTMLAttributes,
   KeyboardEventHandler,
 } from 'react';
-import { Children } from 'react';
+import { Children, memo, useCallback } from 'react';
 
 export type PromptInputProps = HTMLAttributes<HTMLFormElement>;
 
-export const PromptInput = ({ className, ...props }: PromptInputProps) => (
+export const PromptInput = memo(({ className, ...props }: PromptInputProps) => (
   <form
     className={cn(
       'w-full divide-y overflow-hidden rounded-xl border bg-background shadow-sm',
@@ -29,14 +29,16 @@ export const PromptInput = ({ className, ...props }: PromptInputProps) => (
     )}
     {...props}
   />
-);
+));
+
+PromptInput.displayName = 'PromptInput';
 
 export type PromptInputTextareaProps = ComponentProps<typeof Textarea> & {
   minHeight?: number;
   maxHeight?: number;
 };
 
-export const PromptInputTextarea = ({
+export const PromptInputTextarea = memo(({
   onChange,
   className,
   placeholder = 'What would you like to know?',
@@ -44,8 +46,13 @@ export const PromptInputTextarea = ({
   maxHeight = 164,
   ...props
 }: PromptInputTextareaProps) => {
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     if (e.key === 'Enter') {
+      // Don't submit if IME composition is in progress
+      if (e.nativeEvent.isComposing) {
+        return;
+      }
+
       if (e.shiftKey) {
         // Allow newline
         return;
@@ -58,7 +65,11 @@ export const PromptInputTextarea = ({
         form.requestSubmit();
       }
     }
-  };
+  }, []);
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(e);
+  }, [onChange]);
 
   return (
     <Textarea
@@ -69,19 +80,19 @@ export const PromptInputTextarea = ({
         className
       )}
       name="message"
-      onChange={(e) => {
-        onChange?.(e);
-      }}
+      onChange={handleChange}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
       {...props}
     />
   );
-};
+});
+
+PromptInputTextarea.displayName = 'PromptInputTextarea';
 
 export type PromptInputToolbarProps = HTMLAttributes<HTMLDivElement>;
 
-export const PromptInputToolbar = ({
+export const PromptInputToolbar = memo(({
   className,
   ...props
 }: PromptInputToolbarProps) => (
@@ -89,11 +100,13 @@ export const PromptInputToolbar = ({
     className={cn('flex items-center justify-between p-1', className)}
     {...props}
   />
-);
+));
+
+PromptInputToolbar.displayName = 'PromptInputToolbar';
 
 export type PromptInputToolsProps = HTMLAttributes<HTMLDivElement>;
 
-export const PromptInputTools = ({
+export const PromptInputTools = memo(({
   className,
   ...props
 }: PromptInputToolsProps) => (
@@ -105,11 +118,13 @@ export const PromptInputTools = ({
     )}
     {...props}
   />
-);
+));
+
+PromptInputTools.displayName = 'PromptInputTools';
 
 export type PromptInputButtonProps = ComponentProps<typeof Button>;
 
-export const PromptInputButton = ({
+export const PromptInputButton = memo(({
   variant = 'ghost',
   className,
   size,
@@ -132,13 +147,15 @@ export const PromptInputButton = ({
       {...props}
     />
   );
-};
+});
+
+PromptInputButton.displayName = 'PromptInputButton';
 
 export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
   status?: ChatStatus;
 };
 
-export const PromptInputSubmit = ({
+export const PromptInputSubmit = memo(({
   className,
   variant = 'default',
   size = 'icon',
@@ -167,7 +184,9 @@ export const PromptInputSubmit = ({
       {children ?? Icon}
     </Button>
   );
-};
+});
+
+PromptInputSubmit.displayName = 'PromptInputSubmit';
 
 export type PromptInputModelSelectProps = ComponentProps<typeof Select>;
 

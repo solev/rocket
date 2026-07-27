@@ -5,15 +5,13 @@ import { cn } from '~/lib/utils';
 import type { UIMessage } from 'ai';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import type { ComponentProps, HTMLAttributes, ReactElement } from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, memo, useCallback, useContext, useMemo, useState } from 'react';
 
 type BranchContextType = {
   currentBranch: number;
   totalBranches: number;
   goToPrevious: () => void;
   goToNext: () => void;
-  branches: ReactElement[];
-  setBranches: (branches: ReactElement[]) => void;
 };
 
 const BranchContext = createContext<BranchContextType | null>(null);
@@ -33,83 +31,87 @@ export type BranchProps = HTMLAttributes<HTMLDivElement> & {
   onBranchChange?: (branchIndex: number) => void;
 };
 
-export const Branch = ({
+export const Branch = memo(({
   defaultBranch = 0,
   onBranchChange,
   className,
+  children,
   ...props
 }: BranchProps) => {
   const [currentBranch, setCurrentBranch] = useState(defaultBranch);
-  const [branches, setBranches] = useState<ReactElement[]>([]);
+  
+  const childrenArray = useMemo(() => 
+    Array.isArray(children) ? children : [children].filter(Boolean), 
+    [children]
+  );
 
-  const handleBranchChange = (newBranch: number) => {
+  const handleBranchChange = useCallback((newBranch: number) => {
     setCurrentBranch(newBranch);
     onBranchChange?.(newBranch);
-  };
+  }, [onBranchChange]);
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     const newBranch =
-      currentBranch > 0 ? currentBranch - 1 : branches.length - 1;
+      currentBranch > 0 ? currentBranch - 1 : childrenArray.length - 1;
     handleBranchChange(newBranch);
-  };
+  }, [currentBranch, childrenArray.length, handleBranchChange]);
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     const newBranch =
-      currentBranch < branches.length - 1 ? currentBranch + 1 : 0;
+      currentBranch < childrenArray.length - 1 ? currentBranch + 1 : 0;
     handleBranchChange(newBranch);
-  };
+  }, [currentBranch, childrenArray.length, handleBranchChange]);
 
-  const contextValue: BranchContextType = {
+  const contextValue: BranchContextType = useMemo(() => ({
     currentBranch,
-    totalBranches: branches.length,
+    totalBranches: childrenArray.length,
     goToPrevious,
     goToNext,
-    branches,
-    setBranches,
-  };
+  }), [currentBranch, childrenArray.length, goToPrevious, goToNext]);
 
   return (
     <BranchContext.Provider value={contextValue}>
       <div
         className={cn('grid w-full gap-2 [&>div]:pb-0', className)}
         {...props}
-      />
+      >
+        {childrenArray.map((branch, index) => (
+          <div
+            className={cn(
+              'grid gap-2 overflow-hidden [&>div]:pb-0',
+              index === currentBranch ? 'block' : 'hidden'
+            )}
+            key={branch.key || index}
+          >
+            {branch}
+          </div>
+        ))}
+      </div>
     </BranchContext.Provider>
   );
-};
+});
+
+Branch.displayName = 'Branch';
 
 export type BranchMessagesProps = HTMLAttributes<HTMLDivElement>;
 
-export const BranchMessages = ({ children, ...props }: BranchMessagesProps) => {
-  const { currentBranch, setBranches, branches } = useBranch();
-  const childrenArray = Array.isArray(children) ? children : [children];
-
-  // Use useEffect to update branches when they change
-  useEffect(() => {
-    if (branches.length !== childrenArray.length) {
-      setBranches(childrenArray);
-    }
-  }, [childrenArray, branches, setBranches]);
-
-  return childrenArray.map((branch, index) => (
-    <div
-      className={cn(
-        'grid gap-2 overflow-hidden [&>div]:pb-0',
-        index === currentBranch ? 'block' : 'hidden'
-      )}
-      key={branch.key}
-      {...props}
-    >
-      {branch}
-    </div>
-  ));
-};
+// Remove BranchMessages component as it's now integrated into Branch
+// export const BranchMessages = ({ children, ...props }: BranchMessagesProps) => {
+//   console.warn('BranchMessages is deprecated. Use Branch directly with children.');
+//   return <div {...props}>{children}</div>;
+// };
+//       {...props}
+//     >
+//       {branch}
+//     </div>
+//   ));
+// };
 
 export type BranchSelectorProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage['role'];
 };
 
-export const BranchSelector = ({
+export const BranchSelector = memo(({
   className,
   from,
   ...props
@@ -131,11 +133,13 @@ export const BranchSelector = ({
       {...props}
     />
   );
-};
+});
+
+BranchSelector.displayName = 'BranchSelector';
 
 export type BranchPreviousProps = ComponentProps<typeof Button>;
 
-export const BranchPrevious = ({
+export const BranchPrevious = memo(({
   className,
   children,
   ...props
@@ -161,11 +165,13 @@ export const BranchPrevious = ({
       {children ?? <ChevronLeftIcon size={14} />}
     </Button>
   );
-};
+});
+
+BranchPrevious.displayName = 'BranchPrevious';
 
 export type BranchNextProps = ComponentProps<typeof Button>;
 
-export const BranchNext = ({
+export const BranchNext = memo(({
   className,
   children,
   ...props
@@ -191,11 +197,13 @@ export const BranchNext = ({
       {children ?? <ChevronRightIcon size={14} />}
     </Button>
   );
-};
+});
+
+BranchNext.displayName = 'BranchNext';
 
 export type BranchPageProps = HTMLAttributes<HTMLSpanElement>;
 
-export const BranchPage = ({ className, ...props }: BranchPageProps) => {
+export const BranchPage = memo(({ className, ...props }: BranchPageProps) => {
   const { currentBranch, totalBranches } = useBranch();
 
   return (
@@ -209,4 +217,6 @@ export const BranchPage = ({ className, ...props }: BranchPageProps) => {
       {currentBranch + 1} of {totalBranches}
     </span>
   );
-};
+});
+
+BranchPage.displayName = 'BranchPage';

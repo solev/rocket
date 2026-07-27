@@ -17,16 +17,19 @@ import {
   XCircleIcon,
 } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
+import { memo, useMemo } from 'react';
 import { CodeBlock } from './code-block';
 
 export type ToolProps = ComponentProps<typeof Collapsible>;
 
-export const Tool = ({ className, ...props }: ToolProps) => (
+export const Tool = memo(({ className, ...props }: ToolProps) => (
   <Collapsible
     className={cn('not-prose mb-4 w-full rounded-md border', className)}
     {...props}
   />
-);
+));
+
+Tool.displayName = 'Tool';
 
 export type ToolHeaderProps = {
   type: ToolUIPart['type'];
@@ -34,30 +37,36 @@ export type ToolHeaderProps = {
   className?: string;
 };
 
-const getStatusBadge = (status: ToolUIPart['state']) => {
-  const labels = {
-    'input-streaming': 'Pending',
-    'input-available': 'Running',
-    'output-available': 'Completed',
-    'output-error': 'Error',
-  } as const;
+const getStatusBadge = memo((status: ToolUIPart['state']) => {
+  const config = useMemo(() => {
+    const statusConfig = {
+      'input-streaming': { label: 'Pending', icon: CircleIcon },
+      'input-available': { label: 'Running', icon: ClockIcon },
+      'output-available': { label: 'Completed', icon: CheckCircleIcon },
+      'output-error': { label: 'Error', icon: XCircleIcon },
+    } as const;
 
-  const icons = {
-    'input-streaming': <CircleIcon className="size-4" />,
-    'input-available': <ClockIcon className="size-4 animate-pulse" />,
-    'output-available': <CheckCircleIcon className="size-4 text-green-600" />,
-    'output-error': <XCircleIcon className="size-4 text-red-600" />,
-  } as const;
+    return statusConfig[status];
+  }, [status]);
+
+  const Icon = config.icon;
 
   return (
     <Badge className="rounded-full text-xs" variant="secondary">
-      {icons[status]}
-      {labels[status]}
+      <Icon className={cn(
+        'size-4',
+        status === 'input-available' && 'animate-pulse',
+        status === 'output-available' && 'text-green-600',
+        status === 'output-error' && 'text-red-600'
+      )} />
+      {config.label}
     </Badge>
   );
-};
+});
 
-export const ToolHeader = ({
+getStatusBadge.displayName = 'StatusBadge';
+
+export const ToolHeader = memo(({
   className,
   type,
   state,
@@ -77,11 +86,13 @@ export const ToolHeader = ({
     </div>
     <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
   </CollapsibleTrigger>
-);
+));
+
+ToolHeader.displayName = 'ToolHeader';
 
 export type ToolContentProps = ComponentProps<typeof CollapsibleContent>;
 
-export const ToolContent = ({ className, ...props }: ToolContentProps) => (
+export const ToolContent = memo(({ className, ...props }: ToolContentProps) => (
   <CollapsibleContent
     className={cn(
       'data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in',
@@ -89,29 +100,40 @@ export const ToolContent = ({ className, ...props }: ToolContentProps) => (
     )}
     {...props}
   />
-);
+));
+
+ToolContent.displayName = 'ToolContent';
 
 export type ToolInputProps = ComponentProps<'div'> & {
   input: ToolUIPart['input'];
 };
 
-export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
-  <div className={cn('space-y-2 overflow-hidden p-4', className)} {...props}>
-    <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-      Parameters
-    </h4>
-    <div className="rounded-md bg-muted/50">
-      <CodeBlock code={JSON.stringify(input, null, 2)} language="json" />
+export const ToolInput = memo(({ className, input, ...props }: ToolInputProps) => {
+  const formattedInput = useMemo(() => 
+    JSON.stringify(input, null, 2), 
+    [input]
+  );
+
+  return (
+    <div className={cn('space-y-2 overflow-hidden p-4', className)} {...props}>
+      <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+        Parameters
+      </h4>
+      <div className="rounded-md bg-muted/50">
+        <CodeBlock code={formattedInput} language="json" />
+      </div>
     </div>
-  </div>
-);
+  );
+});
+
+ToolInput.displayName = 'ToolInput';
 
 export type ToolOutputProps = ComponentProps<'div'> & {
   output: ReactNode;
   errorText: ToolUIPart['errorText'];
 };
 
-export const ToolOutput = ({
+export const ToolOutput = memo(({
   className,
   output,
   errorText,
@@ -139,4 +161,6 @@ export const ToolOutput = ({
       </div>
     </div>
   );
-};
+});
+
+ToolOutput.displayName = 'ToolOutput';

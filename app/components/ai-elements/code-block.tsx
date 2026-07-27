@@ -4,7 +4,7 @@ import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import type { ComponentProps, HTMLAttributes, ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, memo, useContext, useMemo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
@@ -26,80 +26,72 @@ export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-export const CodeBlock = ({
+export const CodeBlock = memo(({
   code,
   language,
   showLineNumbers = false,
   className,
   children,
   ...props
-}: CodeBlockProps) => (
-  <CodeBlockContext.Provider value={{ code }}>
-    <div
-      className={cn(
-        'relative w-full overflow-hidden rounded-md border bg-background text-foreground',
-        className
-      )}
-      {...props}
-    >
-      <div className="relative">
-        {/* @ts-expect-error - SyntaxHighlighter is not a valid JSX component */}
-        <SyntaxHighlighter
-          className="overflow-hidden dark:hidden"
-          codeTagProps={{
-            className: 'font-mono text-sm',
-          }}
-          customStyle={{
-            margin: 0,
-            padding: '1rem',
-            fontSize: '0.875rem',
-            background: 'hsl(var(--background))',
-            color: 'hsl(var(--foreground))',
-          }}
-          language={language}
-          lineNumberStyle={{
-            color: 'hsl(var(--muted-foreground))',
-            paddingRight: '1rem',
-            minWidth: '2.5rem',
-          }}
-          showLineNumbers={showLineNumbers}
-          style={oneLight}
-        >
-          {code}
-        </SyntaxHighlighter>
-        {/* @ts-expect-error - SyntaxHighlighter is not a valid JSX component */}
-        <SyntaxHighlighter
-          className="hidden overflow-hidden dark:block"
-          codeTagProps={{
-            className: 'font-mono text-sm',
-          }}
-          customStyle={{
-            margin: 0,
-            padding: '1rem',
-            fontSize: '0.875rem',
-            background: 'hsl(var(--background))',
-            color: 'hsl(var(--foreground))',
-          }}
-          language={language}
-          lineNumberStyle={{
-            color: 'hsl(var(--muted-foreground))',
-            paddingRight: '1rem',
-            minWidth: '2.5rem',
-          }}
-          showLineNumbers={showLineNumbers}
-          style={oneDark}
-        >
-          {code}
-        </SyntaxHighlighter>
-        {children && (
-          <div className="absolute top-2 right-2 flex items-center gap-2">
-            {children}
-          </div>
+}: CodeBlockProps) => {
+  // Use system preference to determine theme and only render one SyntaxHighlighter
+  const isDarkMode = typeof window !== 'undefined' 
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : false;
+
+  const syntaxHighlighterProps = useMemo(() => ({
+    codeTagProps: {
+      className: 'font-mono text-sm',
+    },
+    customStyle: {
+      margin: 0,
+      padding: '1rem',
+      fontSize: '0.875rem',
+      background: 'hsl(var(--background))',
+      color: 'hsl(var(--foreground))',
+    },
+    language,
+    lineNumberStyle: {
+      color: 'hsl(var(--muted-foreground))',
+      paddingRight: '1rem',
+      minWidth: '2.5rem',
+    },
+    showLineNumbers,
+    style: isDarkMode ? oneDark : oneLight,
+  }), [language, showLineNumbers, isDarkMode]);
+
+  return (
+    <CodeBlockContext.Provider value={{ code }}>
+      <div
+        className={cn(
+          'relative w-full overflow-hidden rounded-md border bg-background text-foreground',
+          className
         )}
+        {...props}
+      >
+        <div className="relative">
+          <SyntaxHighlighter
+            className="overflow-hidden"
+            {...syntaxHighlighterProps}
+          >
+            {code}
+          </SyntaxHighlighter>
+          {children && (
+            <div className="absolute top-2 right-2 flex items-center gap-2">
+              {children}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  </CodeBlockContext.Provider>
+    </CodeBlockContext.Provider>
+  );
+}, (prevProps, nextProps) => 
+  prevProps.code === nextProps.code &&
+  prevProps.language === nextProps.language &&
+  prevProps.showLineNumbers === nextProps.showLineNumbers
 );
+
+CodeBlock.displayName = 'CodeBlock';
 
 export type CodeBlockCopyButtonProps = ComponentProps<typeof Button> & {
   onCopy?: () => void;
@@ -107,7 +99,7 @@ export type CodeBlockCopyButtonProps = ComponentProps<typeof Button> & {
   timeout?: number;
 };
 
-export const CodeBlockCopyButton = ({
+export const CodeBlockCopyButton = memo(({
   onCopy,
   onError,
   timeout = 2000,
@@ -147,4 +139,6 @@ export const CodeBlockCopyButton = ({
       {children ?? <Icon size={14} />}
     </Button>
   );
-};
+});
+
+CodeBlockCopyButton.displayName = 'CodeBlockCopyButton';

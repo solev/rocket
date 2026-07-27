@@ -6,12 +6,13 @@ import {
 import { cn } from '~/lib/utils';
 import type { UIMessage } from 'ai';
 import type { ComponentProps, HTMLAttributes } from 'react';
+import { memo } from 'react';
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage['role'];
 };
 
-export const Message = ({ className, from, ...props }: MessageProps) => (
+export const Message = memo(({ className, from, ...props }: MessageProps) => (
   <div
     className={cn(
       'group flex w-full items-end justify-end gap-2 py-4',
@@ -21,11 +22,13 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
     )}
     {...props}
   />
-);
+));
+
+Message.displayName = 'Message';
 
 export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
 
-export const MessageContent = ({
+export const MessageContent = memo(({
   children,
   className,
   ...props
@@ -41,24 +44,28 @@ export const MessageContent = ({
   >
     <div className="is-user:dark">{children}</div>
   </div>
-);
+));
+
+MessageContent.displayName = 'MessageContent';
 
 export type MessageAvatarProps = ComponentProps<typeof Avatar> & {
   src: string;
   name?: string;
 };
 
-export const MessageAvatar = ({
+export const MessageAvatar = memo(({
   src,
   name,
   className,
   ...props
 }: MessageAvatarProps) => (
   <Avatar
-    className={cn('size-8 ring ring-1 ring-border', className)}
+    className={cn('size-8 ring-1 ring-border', className)}
     {...props}
   >
     <AvatarImage alt="" className="mt-0 mb-0" src={src} />
     <AvatarFallback>{name?.slice(0, 2) || 'ME'}</AvatarFallback>
   </Avatar>
-);
+));
+
+MessageAvatar.displayName = 'MessageAvatar';

@@ -1,17 +1,18 @@
 import { cn } from '~/lib/utils';
 import type { HTMLAttributes } from 'react';
+import { memo } from 'react';
 
 type LoaderIconProps = {
   size?: number;
 };
 
-const LoaderIcon = ({ size = 16 }: LoaderIconProps) => (
+const LoaderIcon = memo(({ size = 16 }: LoaderIconProps) => (
   <svg
     height={size}
     strokeLinejoin="round"
-    style={{ color: 'currentcolor' }}
     viewBox="0 0 16 16"
     width={size}
+    className="text-current"
   >
     <title>Loader</title>
     <g clipPath="url(#clip0_2393_1490)">
@@ -77,13 +78,15 @@ const LoaderIcon = ({ size = 16 }: LoaderIconProps) => (
       </clipPath>
     </defs>
   </svg>
-);
+));
+
+LoaderIcon.displayName = 'LoaderIcon';
 
 export type LoaderProps = HTMLAttributes<HTMLDivElement> & {
   size?: number;
 };
 
-export const Loader = ({ className, size = 16, ...props }: LoaderProps) => (
+export const Loader = memo(({ className, size = 16, ...props }: LoaderProps) => (
   <div
     className={cn(
       'inline-flex animate-spin items-center justify-center',
@@ -93,4 +96,6 @@ export const Loader = ({ className, size = 16, ...props }: LoaderProps) => (
   >
     <LoaderIcon size={size} />
   </div>
-);
+));
+
+Loader.displayName = 'Loader';
