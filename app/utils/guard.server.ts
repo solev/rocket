@@ -6,7 +6,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 // 2) Application-specific auth helpers
 import { getUser, requireAuth } from "~/lib/auth/require-auth.server";
-import { polarClient } from "~/lib/auth/auth.server";
+import { isPolarEnabled, polarClient } from "~/lib/auth/auth.server";
 
 // Type helpers derived from our auth helpers (no `any`)
 export type RequireUser = Awaited<ReturnType<typeof requireAuth>>;
@@ -23,8 +23,11 @@ export function withAuthLoader<
   L extends (
     args: LoaderFunctionArgs & {
       user: RequireUser;
-      /** Resolved Polar customer state for the authenticated user. */
-      customerState: PolarCustomerState;
+      /**
+       * Resolved Polar customer state for the authenticated user,
+       * or `null` when Polar billing is disabled (see `isPolarEnabled`).
+       */
+      customerState: PolarCustomerState | null;
     }
   ) => unknown
 >(fn: L): (args: LoaderFunctionArgs) => Promise<Awaited<ReturnType<L>>> {
@@ -33,9 +36,9 @@ export function withAuthLoader<
     const user = await requireAuth(args.request);
 
     // Fetch Polar state now so it's available to downstream loaders without awaiting
-    const customerState = await polarClient.customers.getStateExternal({
-      externalId: user.id,
-    });
+    const customerState = isPolarEnabled
+      ? await polarClient.customers.getStateExternal({ externalId: user.id })
+      : null;
 
     return (await fn({
       ...args,

@@ -1,0 +1,468 @@
+[0m[2m[35m$[0m [2m[1mreact-router dev[0m
+[2m12:21:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m2026-07-28T09:21:43.572Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m12:21:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ new dependencies optimized: [33m@vercel/analytics/react, @radix-ui/react-slot, class-variance-authority, lucide-react, radix-ui, clsx, tailwind-merge, @radix-ui/react-dialog, better-auth, better-auth/adapters/drizzle, @polar-sh/better-auth, @polar-sh/sdk, @radix-ui/react-label, @radix-ui/react-avatar, drizzle-orm/node-postgres, pg, drizzle-orm/pg-core, better-auth/react[32m[39m
+[2m12:21:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m2026-07-28T09:21:56.690Z[0m [31mERROR[0m [1m[Better Auth]:[0m User not found { email: 'chat-smoke-20260728@example.com' }
+[2m12:23:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ new dependencies optimized: [33mrecharts, @tanstack/react-table[32m[39m
+[2m12:23:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ optimized dependencies changed. reloading[39m
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 
+[2m12:23:02 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ new dependencies optimized: [33m@ai-sdk/react, ai, @streamdown/cjk, @streamdown/code, @streamdown/math, @streamdown/mermaid, streamdown, @shadcn/react/message-scroller, @radix-ui/react-use-controllable-state, nanoid, motion/react, cmdk, shiki[32m[39m
+[2m12:23:02 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ optimized dependencies changed. reloading[39m
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[react-router][22m[39m [32mConfig saved[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/app.css, /app/routes/ai/chat.tsx[22m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/app.css, /app/routes/ai/chat.tsx[22m [33m(x2)[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/app.css, /app/routes/ai/chat.tsx[22m [33m(x3)[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mapp/lib/lazy-client.tsx[22m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/routes/ai/chat.tsx, /app/app.css[22m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/routes/ai/chat.tsx, /app/app.css[22m [33m(x2)[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/routes/ai/chat.tsx, /app/app.css[22m [33m(x3)[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:48 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mapp/routes/ai/chat.tsx[22m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/components/centered-loader.tsx, /app/app.css[22m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/components/centered-loader.tsx, /app/app.css[22m [33m(x2)[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/app/components/centered-loader.tsx, /app/app.css[22m [33m(x3)[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:54 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mapp/components/centered-loader.tsx[22m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1;1H[0J[2m12:23:54 PM[22m [36m[1m[react-router][22m[39m [32mConfig saved[39m
+Error: No route matches URL "/app/components/centered-loader.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+Error: No route matches URL "/app/components/centered-loader.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/app/components/centered-loader.tsx?t=1785230634505" 
+No routes matched location "/app/components/centered-loader.tsx?t=1785230634505" 
+Error: No route matches URL "/app/components/centered-loader.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/app/components/centered-loader.tsx?t=1785230634506" 
+Error: No route matches URL "/app/components/centered-loader.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/app/components/centered-loader.tsx?t=1785230634506" 
+Error: No route matches URL "/app/components/centered-loader.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/app/components/centered-loader.tsx?t=1785230634505" 
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 
+Error: No route matches URL "/app/lib/lazy-client.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/app/lib/lazy-client.tsx" 
+Error: No route matches URL "/app/components/centered-loader.tsx"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/app/components/centered-loader.tsx" 
+Error: No route matches URL "/avatars/shadcn.jpg"
+    at getInternalRouterError (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:4678:5)
+    at Object.query (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-ZYFC6VSF.mjs:2755:19)
+    at handleDocumentRequest (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1321:38)
+    at requestHandler (file:///Users/martinsolev/Developer/Projects/rocket/node_modules/react-router/dist/development/chunk-HZX6U7MI.mjs:1236:24)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at nodeHandler (/Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3396:30)
+    at /Users/martinsolev/Developer/Projects/rocket/node_modules/@react-router/dev/dist/vite.js:3402:17
+No routes matched location "/avatars/shadcn.jpg" 

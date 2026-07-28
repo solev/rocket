@@ -11,24 +11,23 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { withAuthLoader } from "~/utils/guard.server";
+import { isPolarEnabled } from "~/lib/auth/auth.server";
 
-type BillingClientData = { active: boolean; error?: string };
+type BillingClientData = {
+  active: boolean;
+  billingEnabled: boolean;
+  error?: string;
+};
 
 export const loader = withAuthLoader(
   async ({ customerState }): Promise<BillingClientData> => {
-    console.log("polar customer data", customerState);
-    var subs = customerState.activeSubscriptions;
-    if (subs?.length) {
-      const sub = subs[0];
-      console.log(sub);
-
-      return {
-        active: true,
-      };
+    if (!isPolarEnabled || !customerState) {
+      return { active: false, billingEnabled: false };
     }
 
     return {
-      active: false,
+      active: Boolean(customerState.activeSubscriptions?.length),
+      billingEnabled: true,
     };
   }
 );
@@ -37,7 +36,7 @@ export default function DashboardBilling({
   loaderData,
 }: Route.ComponentProps & { loaderData: BillingClientData }) {
   const [annual, setAnnual] = React.useState<boolean>(false);
-  const { active, error } = loaderData;
+  const { active, billingEnabled, error } = loaderData;
 
   return (
     <div className="space-y-6">
@@ -47,6 +46,20 @@ export default function DashboardBilling({
           Manage your subscription and customer portal.
         </p>
       </div>
+
+      {!billingEnabled && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Billing is not configured</CardTitle>
+            <CardDescription>
+              Polar is disabled for this environment. Set{" "}
+              <code className="font-mono">POLAR_ACCESS_TOKEN</code> in your{" "}
+              <code className="font-mono">.env</code> to enable checkout, the
+              customer portal and subscription status.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
       {/* Current plan card */}
       <Card>
@@ -129,6 +142,7 @@ export default function DashboardBilling({
               </div>
               <Button
                 className="w-full"
+                disabled={!billingEnabled}
                 onClick={async () => {
                   try {
                     await authClient.checkout({ slug: "pro" });
@@ -177,6 +191,7 @@ export default function DashboardBilling({
             <Button
               type="button"
               variant="outline"
+              disabled={!billingEnabled}
               onClick={async () => {
                 try {
                   await authClient.customer.portal();
@@ -187,7 +202,7 @@ export default function DashboardBilling({
             >
               Open Customer Portal
             </Button>
-            {active && (
+            {active && billingEnabled && (
               <Button
                 type="button"
                 onClick={async () => {

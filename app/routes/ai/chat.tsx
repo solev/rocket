@@ -1,18 +1,15 @@
-import { lazyClient } from "~/lib/lazy-client";
-import { CenteredLoader } from "~/components/centered-loader";
 import type { Route } from "./+types/chat";
+import Chat from "./components/chat";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { searchParams } = new URL(request.url);
-  return { searchParams };
+  const isAiConfigured = Boolean(
+    process.env.AZURE_OPENAI_RESOURCE_NAME &&
+      process.env.AZURE_OPENAI_API_KEY
+  );
+  return { isAiConfigured, searchParams };
 }
 
-// SSR-safe lazy import, with optional chunk preloading
-const Chat = lazyClient(() => import("./components/chat"), {
-  ssrFallback: null,
-  fallback: <CenteredLoader />,
-});
-
-export default function ChatBotDemo() {
-  return <Chat />;
+export default function ChatBotDemo({ loaderData }: Route.ComponentProps) {
+  return <Chat isConfigured={loaderData.isAiConfigured} />;
 }

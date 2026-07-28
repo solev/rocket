@@ -22,8 +22,4 @@ export default [
 	// Better Auth dynamic API handler (splat)
 	route("api/auth/*", "routes/api.auth.$.tsx"),
 	route("api/chat", "routes/api/chat.tsx"),
-	// Wireframe previews for Seestem
-	route("wireframes/a", "routes/wireframes/seestem-wireframe-a.tsx"),
-	route("wireframes/b", "routes/wireframes/seestem-wireframe-b.tsx"),
-	route("wireframes/c", "routes/wireframes/seestem-wireframe-c.tsx"),
 ] satisfies RouteConfig;

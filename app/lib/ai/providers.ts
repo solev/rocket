@@ -1,13 +1,22 @@
-import { createAzure } from "@ai-sdk/azure"
+import { createAzure } from "@ai-sdk/azure";
 
-// Azure OpenAI configuration using AI SDK
 const azure = createAzure({
-  resourceName: process.env.AZURE_OPENAI_RESOURCE_NAME, // Azure resource name
-  apiKey: process.env.AZURE_OPENAI_API_KEY, // Azure API key
+  resourceName: process.env.AZURE_OPENAI_RESOURCE_NAME,
+  apiKey: process.env.AZURE_OPENAI_API_KEY,
 });
 
-// Get the configured model
-export function getModel(modelName: string) {
- 
-  return azure(modelName);
+export function isAiConfigured() {
+  return Boolean(
+    process.env.AZURE_OPENAI_RESOURCE_NAME &&
+      process.env.AZURE_OPENAI_API_KEY
+  );
+}
+
+export function getModel() {
+  const deploymentName =
+    process.env.AZURE_OPENAI_DEPLOYMENT_NAME ?? "gpt-5-chat";
+
+  // AI SDK 6+ defaults to Azure's Responses API. Keep the existing Chat
+  // Completions behavior so current Azure deployments continue to work.
+  return azure.chat(deploymentName);
 }
