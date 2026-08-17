@@ -1,11 +1,11 @@
-import { ChevronRight, type LucideIcon } from "lucide-react"
-import { NavLink, useLocation } from "react-router"
+import { ChevronRight, type LucideIcon } from "lucide-react";
+import { NavLink, useLocation } from "react-router";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible"
+} from "~/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,21 +15,21 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "~/components/ui/sidebar"
+} from "~/components/ui/sidebar";
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+      title: string;
+      url: string;
+    }[];
+  }[];
 }) {
   const location = useLocation();
   return (
@@ -49,7 +49,8 @@ export function NavMain({
                     [
                       // base styles (mirroring SidebarMenuButton variants default)
                       "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
-                      isActive && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
+                      isActive &&
+                        "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
                       isPending && "opacity-75",
                     ]
                       .filter(Boolean)
@@ -60,11 +61,12 @@ export function NavMain({
                   <span>{item.title}</span>
                 </NavLink>
               </SidebarMenuItem>
-            )
+            );
           }
-          const childActive = item.items?.some(
-            (sub) => sub.url !== "#" && location.pathname.startsWith(sub.url)
-          ) || false;
+          const childActive =
+            item.items?.some(
+              (sub) => sub.url !== "#" && location.pathname.startsWith(sub.url),
+            ) || false;
           return (
             <Collapsible
               key={item.title}
@@ -74,7 +76,10 @@ export function NavMain({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title} isActive={childActive}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    isActive={childActive}
+                  >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -97,7 +102,9 @@ export function NavMain({
                                 "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden transition hover:underline",
                                 isActive && "font-medium",
                                 isPending && "opacity-75",
-                              ].filter(Boolean).join(" ")
+                              ]
+                                .filter(Boolean)
+                                .join(" ")
                             }
                           >
                             <span>{subItem.title}</span>
@@ -109,9 +116,9 @@ export function NavMain({
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

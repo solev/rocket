@@ -10,6 +10,36 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return { user };
 }
 
+type LandingUser = Awaited<ReturnType<typeof loader>>["user"];
+
+const logoPlaceholders = [
+  "logo-placeholder-1",
+  "logo-placeholder-2",
+  "logo-placeholder-3",
+  "logo-placeholder-4",
+  "logo-placeholder-5",
+  "logo-placeholder-6",
+] as const;
+
+const integrationPlaceholders = [
+  "integration-placeholder-1",
+  "integration-placeholder-2",
+  "integration-placeholder-3",
+  "integration-placeholder-4",
+  "integration-placeholder-5",
+  "integration-placeholder-6",
+] as const;
+
+const testimonialCards = [
+  "testimonial-1",
+  "testimonial-2",
+  "testimonial-3",
+  "testimonial-4",
+  "testimonial-5",
+] as const;
+
+const testimonialStars = ["star-1", "star-2", "star-3", "star-4", "star-5"];
+
 // NOTE: This keeps the original section structure but upgrades styles, semantics,
 // content quality, and introduces smooth-scroll + active section highlighting.
 
@@ -18,7 +48,8 @@ export function meta() {
     { title: "Rocket - SaaS & AI Starter Kit" },
     {
       name: "description",
-      content: "Build, deploy, and scale SaaS and AI MVPs 10× faster with Rocket starter kit.",
+      content:
+        "Build, deploy, and scale SaaS and AI MVPs 10× faster with Rocket starter kit.",
     },
   ];
 }
@@ -32,7 +63,7 @@ export default function LandingPage() {
     >
       {/* Ocean Abyss Background with Top Glow (dark mode only) */}
       <div className="absolute inset-0 z-0 hidden dark:block pointer-events-none dark:bg-black bg-ocean-abyss" />
-      
+
       {/* Foreground content */}
       <div className="relative z-10 flex flex-col min-h-dvh scroll-smooth">
         <NavBar user={user} />
@@ -78,7 +109,7 @@ function Section({
           }
         });
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -100,7 +131,7 @@ function Section({
   );
 }
 
-function NavBar({ user }: { user: any }) {
+function NavBar({ user }: { user: LandingUser }) {
   const sections = React.useMemo(
     () => [
       { label: "Features", href: "#features" },
@@ -108,7 +139,7 @@ function NavBar({ user }: { user: any }) {
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
-    []
+    [],
   );
   const [active, setActive] = React.useState<string>("");
   const isAuthed = !!user;
@@ -121,7 +152,7 @@ function NavBar({ user }: { user: any }) {
           }
         });
       },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
     );
     sections.forEach((s) => {
       const el = document.getElementById(s.href.slice(1));
@@ -197,7 +228,10 @@ function NavBar({ user }: { user: any }) {
 
 function Hero() {
   return (
-  <Section id="hero" className="pt-24 md:pt-32 pb-12 text-center relative overflow-hidden">
+    <Section
+      id="hero"
+      className="pt-24 md:pt-32 pb-12 text-center relative overflow-hidden"
+    >
       {/* Light-mode Dreamy Sky Pink Glow (scoped to hero) */}
       <div className="absolute inset-0 -z-10 dark:hidden pointer-events-none bg-dreamy-sky" />
       <div className="mx-auto max-w-3xl space-y-7">
@@ -209,7 +243,8 @@ function Hero() {
           Ship SaaS & AI MVPs 10× faster with Rocket
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
-          Complete starter kit with auth, multi-tenant data, billing, and AI integration. From idea to production in days, not months.
+          Complete starter kit with auth, multi-tenant data, billing, and AI
+          integration. From idea to production in days, not months.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
           <Button asChild size="lg" className="px-7">
@@ -219,7 +254,7 @@ function Hero() {
             <Link to="/login">Book Demo</Link>
           </Button>
         </div>
-  <div className="mt-10 aspect-video w-full rounded-xl border bg-gradient-to-br from-muted to-muted/30 relative overflow-hidden will-change-transform animate-float-slow">
+        <div className="mt-10 aspect-video w-full rounded-xl border bg-gradient-to-br from-muted to-muted/30 relative overflow-hidden will-change-transform animate-float-slow">
           <div className="absolute inset-0 grid place-items-center text-xs text-muted-foreground">
             Product Preview Placeholder
           </div>
@@ -233,8 +268,8 @@ function LogoCloud() {
   return (
     <Section id="logos" className="py-12">
       <div className="grid grid-cols-3 md:grid-cols-6 gap-8 place-items-center opacity-70">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-8 w-24 rounded bg-muted" />
+        {logoPlaceholders.map((placeholderId) => (
+          <div key={placeholderId} className="h-8 w-24 rounded bg-muted" />
         ))}
       </div>
     </Section>
@@ -266,11 +301,11 @@ function Features() {
         title="Features"
         subtitle="Each block removes a week of boilerplate."
       />
-  <div className="mt-12 grid gap-6 md:grid-cols-2 reveal-stagger">
+      <div className="mt-12 grid gap-6 md:grid-cols-2 reveal-stagger">
         {list.map((f, i) => (
           <div
             key={f.title}
-    className="group rounded-xl border p-6 bg-card/40 hover:bg-card transition-colors relative overflow-hidden reveal-child"
+            className="group rounded-xl border p-6 bg-card/40 hover:bg-card transition-colors relative overflow-hidden reveal-child"
           >
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-gradient-to-br from-primary/5 to-primary/0" />
             <div className="flex items-start gap-4">
@@ -295,14 +330,20 @@ function Features() {
 }
 
 function OutcomesStats() {
-  const stats = ["55%", "55%", "55%", "55%", "55%"];
+  const stats = [
+    { id: "stat-1", value: "55%", label: "Data 1" },
+    { id: "stat-2", value: "55%", label: "Data 2" },
+    { id: "stat-3", value: "55%", label: "Data 3" },
+    { id: "stat-4", value: "55%", label: "Data 4" },
+    { id: "stat-5", value: "55%", label: "Data 5" },
+  ];
   return (
     <Section id="outcomes" className="pt-0">
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center reveal-stagger">
-        {stats.map((s, i) => (
-      <div key={i} className="space-y-2 reveal-child">
-            <div className="text-2xl font-semibold">{s}</div>
-            <p className="text-xs text-muted-foreground">Data {i + 1}</p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center reveal-stagger">
+        {stats.map((stat) => (
+          <div key={stat.id} className="space-y-2 reveal-child">
+            <div className="text-2xl font-semibold">{stat.value}</div>
+            <p className="text-xs text-muted-foreground">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -331,11 +372,11 @@ function HowItWorks() {
         title="How It Works"
         subtitle="Three steps—production ready from day one."
       />
-  <ol className="mt-12 grid gap-6 md:grid-cols-3 list-none counter-reset:step reveal-stagger">
+      <ol className="mt-12 grid gap-6 md:grid-cols-3 list-none counter-reset:step reveal-stagger">
         {steps.map((s, i) => (
           <li
             key={s.title}
-    className="relative rounded-xl border p-6 flex flex-col gap-3 bg-card/40 reveal-child"
+            className="relative rounded-xl border p-6 flex flex-col gap-3 bg-card/40 reveal-child"
           >
             <div className="h-9 w-9 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
               {i + 1}
@@ -355,18 +396,26 @@ function HowItWorks() {
 }
 
 function WhyChoose() {
-  const points = ["Title", "Title", "Title", "Title"];
+  const points = [
+    { id: "point-1", title: "Title" },
+    { id: "point-2", title: "Title" },
+    { id: "point-3", title: "Title" },
+    { id: "point-4", title: "Title" },
+  ];
   return (
     <Section id="why-us">
       <HeaderEyebrow
         title="Why Choose Us"
         subtitle="Make your strengths obvious."
       />
-    <div className="mt-10 grid gap-6 md:grid-cols-4 reveal-stagger">
-        {points.map((p, i) => (
-      <div key={i} className="rounded-xl border p-6 space-y-3 reveal-child">
+      <div className="mt-10 grid gap-6 md:grid-cols-4 reveal-stagger">
+        {points.map((point) => (
+          <div
+            key={point.id}
+            className="rounded-xl border p-6 space-y-3 reveal-child"
+          >
             <div className="h-8 w-8 rounded-full bg-primary/10" />
-            <h3 className="font-medium">{p}</h3>
+            <h3 className="font-medium">{point.title}</h3>
             <p className="text-xs text-muted-foreground">
               Short supporting explanation of the win.
             </p>
@@ -385,8 +434,11 @@ function Integrations() {
         subtitle="It plays nice with your stack."
       />
       <div className="mt-10 grid grid-cols-3 md:grid-cols-6 gap-8 place-items-center opacity-70 reveal-stagger">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-8 w-24 rounded bg-muted reveal-child" />
+        {integrationPlaceholders.map((placeholderId) => (
+          <div
+            key={placeholderId}
+            className="h-8 w-24 rounded bg-muted reveal-child"
+          />
         ))}
       </div>
     </Section>
@@ -401,11 +453,17 @@ function Testimonials() {
         subtitle="Users can sell your product better than you."
       />
       <div className="mt-10 grid gap-6 md:grid-cols-3 lg:grid-cols-5 reveal-stagger">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="rounded-xl border p-6 space-y-3 bg-card/50 reveal-child">
+        {testimonialCards.map((testimonialId) => (
+          <div
+            key={testimonialId}
+            className="rounded-xl border p-6 space-y-3 bg-card/50 reveal-child"
+          >
             <div className="flex gap-1">
-              {Array.from({ length: 5 }).map((_, r) => (
-                <div key={r} className="h-3 w-3 rounded-full bg-yellow-400" />
+              {testimonialStars.map((starId) => (
+                <div
+                  key={starId}
+                  className="h-3 w-3 rounded-full bg-yellow-400"
+                />
               ))}
             </div>
             <p className="text-sm text-muted-foreground line-clamp-3">
@@ -478,6 +536,7 @@ function Pricing() {
           Monthly
         </span>
         <button
+          type="button"
           onClick={() => setAnnual((v) => !v)}
           className="relative inline-flex h-6 w-11 items-center rounded-full border bg-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Toggle annual pricing"
@@ -501,7 +560,9 @@ function Pricing() {
               key={t.name}
               className={
                 "rounded-xl border p-6 flex flex-col gap-5 bg-card/40 reveal-child " +
-                (t.highlight ? "border-primary shadow-sm relative ring-1 ring-primary/20" : "")
+                (t.highlight
+                  ? "border-primary shadow-sm relative ring-1 ring-primary/20"
+                  : "")
               }
             >
               {t.highlight && (
@@ -556,9 +617,12 @@ function FAQ() {
         title="FAQ"
         subtitle="Handle objections before they happen."
       />
-    <div className="mt-8 space-y-3 reveal-stagger">
-        {faqs.map((q, i) => (
-      <details key={i} className="group rounded-lg border p-4 [&_summary::-webkit-details-marker]:hidden reveal-child">
+      <div className="mt-8 space-y-3 reveal-stagger">
+        {faqs.map((q) => (
+          <details
+            key={q}
+            className="group rounded-lg border p-4 [&_summary::-webkit-details-marker]:hidden reveal-child"
+          >
             <summary className="flex cursor-pointer items-center justify-between text-sm font-medium">
               {q}
               <span className="transition-transform group-open:rotate-45">
@@ -643,35 +707,23 @@ function SiteFooter() {
               <div className="font-medium">Company</div>
               <ul className="space-y-1 text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:underline">
-                    Blog
-                  </a>
+                  <span className="hover:underline">Blog</span>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline">
-                    Careers
-                  </a>
+                  <span className="hover:underline">Careers</span>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline">
-                    Contact
-                  </a>
+                  <span className="hover:underline">Contact</span>
                 </li>
               </ul>
             </div>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t text-xs text-muted-foreground">
-          <p>
-            © {new Date().getFullYear()} Your Company. All rights reserved.
-          </p>
+          <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
           <div className="flex gap-4">
-            <a href="#" className="hover:underline">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:underline">
-              Terms
-            </a>
+            <span className="hover:underline">Privacy Policy</span>
+            <span className="hover:underline">Terms</span>
           </div>
         </div>
       </div>

@@ -17,7 +17,17 @@ export async function listSettingsIds(limit = 100) {
     .limit(limit);
 }
 
-export async function upsertUserSettings(userId: string, data: Partial<{ orgName: string; contactEmail: string; defaultModel: string; webhookUrl: string; openaiApiKey: string; anthropicApiKey: string; }>) {
+export async function upsertUserSettings(
+  userId: string,
+  data: Partial<{
+    orgName: string;
+    contactEmail: string;
+    defaultModel: string;
+    webhookUrl: string;
+    openaiApiKey: string;
+    anthropicApiKey: string;
+  }>,
+) {
   const existing = await getUserSettingsByUserId(userId);
   const now = new Date();
   if (!existing) {
@@ -40,11 +50,19 @@ export async function upsertUserSettings(userId: string, data: Partial<{ orgName
     .update(userSettings)
     .set({
       ...("orgName" in data ? { orgName: data.orgName ?? null } : {}),
-      ...("contactEmail" in data ? { contactEmail: data.contactEmail ?? null } : {}),
-      ...("defaultModel" in data ? { defaultModel: data.defaultModel ?? null } : {}),
+      ...("contactEmail" in data
+        ? { contactEmail: data.contactEmail ?? null }
+        : {}),
+      ...("defaultModel" in data
+        ? { defaultModel: data.defaultModel ?? null }
+        : {}),
       ...("webhookUrl" in data ? { webhookUrl: data.webhookUrl ?? null } : {}),
-      ...("openaiApiKey" in data ? { openaiApiKey: data.openaiApiKey ?? null } : {}),
-      ...("anthropicApiKey" in data ? { anthropicApiKey: data.anthropicApiKey ?? null } : {}),
+      ...("openaiApiKey" in data
+        ? { openaiApiKey: data.openaiApiKey ?? null }
+        : {}),
+      ...("anthropicApiKey" in data
+        ? { anthropicApiKey: data.anthropicApiKey ?? null }
+        : {}),
       updatedAt: now,
     })
     .where(eq(userSettings.userId, userId));

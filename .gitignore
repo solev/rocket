@@ -22,3 +22,5 @@ node_modules
 # generated files
 /app/components/ui/icons
 .react-router/
+# Local dev server logs
+.openlogs/

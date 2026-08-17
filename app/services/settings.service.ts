@@ -1,14 +1,20 @@
-import { upsertUserSettings, getUserSettingsByUserId } from "~/db/queries/settings.queries";
+import {
+  upsertUserSettings,
+  getUserSettingsByUserId,
+} from "~/db/queries/settings.queries";
 
 // Business logic service layer (validation, orchestration, x-domain rules)
-export async function saveGeneralSettings(userId: string, input: {
-  orgName?: string;
-  contactEmail?: string;
-  defaultModel?: string;
-  webhookUrl?: string;
-  openaiApiKey?: string;
-  anthropicApiKey?: string;
-}) {
+export async function saveGeneralSettings(
+  userId: string,
+  input: {
+    orgName?: string;
+    contactEmail?: string;
+    defaultModel?: string;
+    webhookUrl?: string;
+    openaiApiKey?: string;
+    anthropicApiKey?: string;
+  },
+) {
   if (input.contactEmail && !/^[^@]+@[^@]+\.[^@]+$/.test(input.contactEmail)) {
     throw new Error("Invalid contact email");
   }

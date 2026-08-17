@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -33,6 +27,12 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  // The organization this session acts within. Core resolves it automatically;
+  // in single-organization mode it is always the user's one organization.
+  activeOrganizationId: text("active_organization_id").references(
+    () => organization.id,
+    { onDelete: "set null" },
+  ),
 });
 
 export const account = pgTable("account", {
@@ -66,14 +66,48 @@ export const verification = pgTable("verification", {
   ),
 });
 
-export const twoFactor = pgTable("two_factor", {
+/**
+ * The ownership boundary every Rocket application scopes its data to.
+ *
+ * Organization-aware ownership is Core. In single-organization mode one
+ * organization is provisioned behind the scenes per user and no management
+ * surface is exposed, so these tables carry ownership without implying a
+ * multi-tenant product.
+ */
+export const organization = pgTable("organization", {
   id: text("id").primaryKey(),
-  secret: text("secret").notNull(),
-  backupCodes: text("backup_codes").notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
+
+export const member = pgTable(
+  "member",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("owner"),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("member_organization_id_user_id_unique").on(
+      table.organizationId,
+      table.userId,
+    ),
+  ],
+);
 
 // Example settings table (single-row per user) for demonstrating query/repository/service layering.
 // NOTE: After adding this you must generate & run a migration (drizzle-kit generate & migrate).
@@ -89,6 +123,10 @@ export const userSettings = pgTable("user_settings", {
   webhookUrl: text("webhook_url"),
   openaiApiKey: text("openai_api_key"),
   anthropicApiKey: text("anthropic_api_key"),
-  createdAt: timestamp("created_at").$defaultFn(() => new Date()).notNull(),
-  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()).notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
 });

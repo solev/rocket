@@ -56,3 +56,15 @@ _Avoid_: Always-on capability
 **Invoked service capability**:
 A capability whose behavior occurs only when application code explicitly calls it and which must report missing configuration clearly when called while inactive.
 _Avoid_: Utility integration
+
+**Capability seam**:
+A Core-owned interface that a deferred capability would implement, letting Core flows depend on the interface rather than on any provider.
+_Avoid_: Adapter, shim, stub
+
+**Availability check**:
+The side-effect-free question of whether a capability's behavior can be invoked, which never fails merely because configuration is absent.
+_Avoid_: Health check, feature flag
+
+**Safe fact**:
+A boolean or other non-secret value derived from configuration on the server and passed to the browser in place of the configuration itself.
+_Avoid_: Public config, client env

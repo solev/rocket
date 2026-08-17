@@ -1,17 +1,24 @@
 import type { ActionFunctionArgs } from "react-router";
-import { auth, isPolarEnabled } from "~/lib/auth/auth.server";
+import { isBillingWebhookAvailable } from "~/capabilities/billing/billing.server";
+import { auth } from "~/lib/auth/auth.server";
 
-// This route is hit by Polar webhooks; the Better Auth webhooks plugin registers a handler.
+/**
+ * Polar's webhook handler is registered by the Better Auth plugin, so this
+ * route forwards to it. Without a webhook secret the payload signature cannot
+ * be verified, and an unverifiable payload must be refused rather than
+ * forwarded.
+ */
+const UNAVAILABLE = "Polar webhooks are not configured";
+
 export async function action({ request }: ActionFunctionArgs) {
-  if (!isPolarEnabled) {
-    return new Response("Polar billing is disabled", { status: 503 });
+  if (!isBillingWebhookAvailable()) {
+    return new Response(UNAVAILABLE, { status: 503 });
   }
-  // Forward to Better Auth handler; plugin is mounted by the Better Auth handler
   return auth.handler(request);
 }
 
 export async function loader() {
-  return isPolarEnabled
+  return isBillingWebhookAvailable()
     ? new Response("OK")
-    : new Response("Polar billing is disabled", { status: 503 });
+    : new Response(UNAVAILABLE, { status: 503 });
 }

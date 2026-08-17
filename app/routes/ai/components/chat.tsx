@@ -46,11 +46,7 @@ import {
   ToolInput,
   ToolOutput,
 } from "~/components/ai-elements/tool";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "~/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import {
   Empty,
@@ -59,11 +55,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "~/components/ui/empty";
-import {
-  Marker,
-  MarkerContent,
-  MarkerIcon,
-} from "~/components/ui/marker";
+import { Marker, MarkerContent, MarkerIcon } from "~/components/ui/marker";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -81,8 +73,7 @@ const chatTransport = new DefaultChatTransport({
 function downloadConversation(messages: UIMessage[]) {
   const markdown = messages
     .map((message) => {
-      const role =
-        message.role.charAt(0).toUpperCase() + message.role.slice(1);
+      const role = message.role.charAt(0).toUpperCase() + message.role.slice(1);
       const text = message.parts
         .filter((part) => part.type === "text")
         .map((part) => part.text)
@@ -91,7 +82,7 @@ function downloadConversation(messages: UIMessage[]) {
     })
     .join("\n\n");
   const url = URL.createObjectURL(
-    new Blob([markdown], { type: "text/markdown" })
+    new Blob([markdown], { type: "text/markdown" }),
   );
   const link = document.createElement("a");
   link.href = url;
@@ -114,16 +105,14 @@ function MessageParts({
   isStreaming,
 }: MessagePartsProps) {
   const sourceParts = message.parts.filter(
-    (part) => part.type === "source-url"
+    (part) => part.type === "source-url",
   );
   const reasoningParts = message.parts.filter(
-    (part) => part.type === "reasoning"
+    (part) => part.type === "reasoning",
   );
   const reasoningText = reasoningParts.map((part) => part.text).join("\n\n");
   const isReasoningStreaming =
-    isLastMessage &&
-    isStreaming &&
-    message.parts.at(-1)?.type === "reasoning";
+    isLastMessage && isStreaming && message.parts.at(-1)?.type === "reasoning";
 
   return (
     <>
@@ -131,10 +120,10 @@ function MessageParts({
         <Sources>
           <SourcesTrigger count={sourceParts.length} />
           <SourcesContent>
-            {sourceParts.map((part, index) => (
+            {sourceParts.map((part) => (
               <Source
                 href={part.url}
-                key={`${message.id}-source-${index}`}
+                key={`${message.id}-source-${part.sourceId}`}
                 title={part.title ?? part.url}
               />
             ))}
@@ -193,14 +182,7 @@ interface ChatProps {
 
 export default function Chat({ isConfigured }: ChatProps) {
   const [input, setInput] = useState("");
-  const {
-    error,
-    messages,
-    regenerate,
-    sendMessage,
-    status,
-    stop,
-  } = useChat({
+  const { error, messages, regenerate, sendMessage, status, stop } = useChat({
     transport: chatTransport,
   });
 
@@ -231,10 +213,9 @@ export default function Chat({ isConfigured }: ChatProps) {
                     <Alert>
                       <AlertTitle>Connect Azure OpenAI</AlertTitle>
                       <AlertDescription>
-                        Add AZURE_OPENAI_RESOURCE_NAME,
-                        AZURE_OPENAI_API_KEY and your optional
-                        AZURE_OPENAI_DEPLOYMENT_NAME to .env, then restart the
-                        development server.
+                        Add AZURE_OPENAI_RESOURCE_NAME, AZURE_OPENAI_API_KEY and
+                        your optional AZURE_OPENAI_DEPLOYMENT_NAME to .env, then
+                        restart the development server.
                       </AlertDescription>
                     </Alert>
                   </MessageScrollerItem>
@@ -259,8 +240,7 @@ export default function Chat({ isConfigured }: ChatProps) {
                   </MessageScrollerItem>
                 ) : (
                   messages.map((message, messageIndex) => {
-                    const isLastMessage =
-                      messageIndex === messages.length - 1;
+                    const isLastMessage = messageIndex === messages.length - 1;
                     const responseText = message.parts
                       .filter((part) => part.type === "text")
                       .map((part) => part.text)
@@ -350,10 +330,7 @@ export default function Chat({ isConfigured }: ChatProps) {
         </div>
       </MessageScrollerProvider>
 
-      <PromptInput
-        className="mx-auto w-full max-w-3xl"
-        onSubmit={handleSubmit}
-      >
+      <PromptInput className="mx-auto w-full max-w-3xl" onSubmit={handleSubmit}>
         <PromptInputBody>
           <PromptInputTextarea
             disabled={!isConfigured}
@@ -368,9 +345,7 @@ export default function Chat({ isConfigured }: ChatProps) {
         </PromptInputBody>
         <PromptInputFooter className="justify-end">
           <PromptInputSubmit
-            disabled={
-              !isConfigured || (status === "ready" && !input.trim())
-            }
+            disabled={!isConfigured || (status === "ready" && !input.trim())}
             onStop={stop}
             status={status}
           />

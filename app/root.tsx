@@ -7,7 +7,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "react-router";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -16,9 +16,7 @@ const THEME_COOKIE = "theme";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(
-    new RegExp("(?:^|; )" + THEME_COOKIE + "=([^;]+)")
-  );
+  const match = cookie.match(new RegExp(`(?:^|; )${THEME_COOKIE}=([^;]+)`));
   const raw = match ? decodeURIComponent(match[1]) : null;
   const theme: Theme | null =
     raw === "dark" || raw === "light" ? (raw as Theme) : null;

@@ -1,0 +1,33 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      # One PR per ecosystem cluster keeps review cost proportional to risk.
+      react-router:
+        patterns:
+          - "react-router*"
+          - "@react-router/*"
+      radix:
+        patterns:
+          - "@radix-ui/*"
+          - "radix-ui"
+      dev-tooling:
+        dependency-type: development
+        patterns:
+          - "*"
+    ignore:
+      # Better Auth carries the session and organization contract; its upgrades
+      # get a deliberate, tested pass rather than an automated bump.
+      - dependency-name: better-auth
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
