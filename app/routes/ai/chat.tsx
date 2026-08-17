@@ -1,5 +1,5 @@
 import type { Route } from "./+types/chat";
-import { isAiChatAvailable } from "~/capabilities/ai-chat/ai-chat.server";
+import { isAiChatAvailable } from "~/integrations/ai-chat/ai-chat.server";
 import Chat from "./components/chat";
 
 export async function loader({ request }: Route.LoaderArgs) {

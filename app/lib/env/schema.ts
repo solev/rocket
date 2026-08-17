@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 import {
-  type CapabilityGroup,
+  type IntegrationGroup,
   nonEmptyString,
-  refineCapabilityGroups,
-} from "./capability-group";
+  refineIntegrationGroups,
+} from "./integration-group";
 
 const postgresUrl = nonEmptyString.refine(
   (value) =>
@@ -56,10 +56,10 @@ export const coreServerShape = {
 } as const;
 
 /**
- * Provider-specific variables. Each group is owned by the capability it
+ * Provider-specific variables. Each group is owned by the integration it
  * belongs to: absent means unavailable, partial means startup failure.
  */
-export const capabilityServerShape = {
+export const integrationServerShape = {
   GOOGLE_CLIENT_ID: nonEmptyString.optional(),
   GOOGLE_CLIENT_SECRET: nonEmptyString.optional(),
 
@@ -80,7 +80,7 @@ export const capabilityServerShape = {
 
 export const serverShape = {
   ...coreServerShape,
-  ...capabilityServerShape,
+  ...integrationServerShape,
 } as const;
 
 /**
@@ -88,15 +88,15 @@ export const serverShape = {
  *
  * Polar is deliberately absent: only `POLAR_ACCESS_TOKEN` is required to make
  * billing available, and the remaining Polar variables unlock individual
- * features rather than the capability as a whole.
+ * features rather than the integration as a whole.
  */
-export const capabilityGroups: readonly CapabilityGroup[] = [
+export const integrationGroups: readonly IntegrationGroup[] = [
   {
-    capability: "Google sign-in",
+    integration: "Google sign-in",
     keys: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
   },
   {
-    capability: "Azure AI Chat",
+    integration: "Azure AI Chat",
     keys: ["AZURE_OPENAI_RESOURCE_NAME", "AZURE_OPENAI_API_KEY"],
   },
 ];
@@ -105,7 +105,7 @@ export function refineServerEnv(
   value: Record<string, unknown>,
   ctx: z.RefinementCtx,
 ): void {
-  refineCapabilityGroups(capabilityGroups, value, ctx);
+  refineIntegrationGroups(integrationGroups, value, ctx);
 
   if (value.NODE_ENV === "production") {
     for (const key of ["BETTER_AUTH_SECRET", "BETTER_AUTH_URL"] as const) {

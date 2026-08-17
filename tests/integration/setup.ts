@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 
-import { capabilityServerShape } from "~/lib/env/schema";
+import { integrationServerShape } from "~/lib/env/schema";
 import { resolveTestDatabaseUrl } from "~/lib/env/test-database";
 
 config();
@@ -20,15 +20,15 @@ process.env.NODE_ENV = "test";
 process.env.BETTER_AUTH_URL ??= "http://localhost:5173";
 
 /**
- * Rocket's central promise is that a clone works with **no optional capability
+ * Rocket's central promise is that a clone works with **no optional integration
  * configured**, so the integration suite asserts exactly that state. Clearing
- * every capability variable makes the run independent of whatever happens to
+ * every integration variable makes the run independent of whatever happens to
  * sit in the developer's own `.env`.
  *
- * Configured-state behavior is covered by the capability unit tests, which
+ * Configured-state behavior is covered by the integration unit tests, which
  * exercise pure config objects instead of the process environment.
  */
-for (const key of Object.keys(capabilityServerShape)) {
+for (const key of Object.keys(integrationServerShape)) {
   delete process.env[key];
 }
 

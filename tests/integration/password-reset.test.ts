@@ -11,7 +11,7 @@ import {
 import { resetDatabase } from "./helpers";
 
 /**
- * Password reset must be reachable with no transactional email capability
+ * Password reset must be reachable with no transactional email integration
  * present. See https://github.com/solev/rocket/issues/12.
  */
 
@@ -47,7 +47,7 @@ function tokenFromResetLink(url: string) {
   return path.slice(path.lastIndexOf("/") + 1);
 }
 
-describe("password reset without an email capability", () => {
+describe("password reset without an email integration", () => {
   beforeEach(async () => {
     await resetDatabase();
     setEmailTransport(null);

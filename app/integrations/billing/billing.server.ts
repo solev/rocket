@@ -7,11 +7,11 @@ import {
   webhooks,
 } from "@polar-sh/better-auth";
 
-import { CapabilityUnavailableError } from "~/lib/capability";
+import { IntegrationUnavailableError } from "~/lib/integration";
 import { env } from "~/lib/env/env.server";
 
 import {
-  BILLING_CAPABILITY,
+  BILLING_INTEGRATION,
   BILLING_GUIDE,
   type BillingConfig,
   areWebhooksAvailable,
@@ -54,11 +54,11 @@ let cachedClient: Polar | null = null;
 /**
  * The Polar SDK client.
  *
- * @throws {CapabilityUnavailableError} when billing is not configured.
+ * @throws {IntegrationUnavailableError} when billing is not configured.
  */
 export function getPolarClient(): Polar {
   if (!isBillingAvailable()) {
-    throw new CapabilityUnavailableError(BILLING_CAPABILITY, BILLING_GUIDE);
+    throw new IntegrationUnavailableError(BILLING_INTEGRATION, BILLING_GUIDE);
   }
 
   cachedClient ??= new Polar({

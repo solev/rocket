@@ -4,9 +4,9 @@ What Rocket is, and what remains to be built. Decided across [Chart a modular st
 
 ## What Rocket is
 
-Rocket is one foundation for **authenticated interactive web applications** — B2B tools, internal applications, SaaS products, and portals. It does not ship product-category presets; applications differ by which capabilities they select and by their own product code.
+Rocket is one foundation for **authenticated interactive web applications** — B2B tools, internal applications, SaaS products, and portals. It does not ship product-category presets; applications differ by which integrations they select and by their own product code.
 
-Rocket applications start by **cloning or forking**. There is no generator, no capability add/remove command, and no downstream upgrade automation. Rocket's promise is documented **manual removal**, nothing more.
+Rocket applications start by **cloning or forking**. There is no generator, no integration add/remove command, and no downstream upgrade automation. Rocket's promise is documented **manual removal**, nothing more.
 
 ### Core
 
@@ -19,9 +19,9 @@ Present in every Rocket application:
 - organization-aware data ownership, running in single-organization mode
 - the Quality foundation
 
-### Capabilities
+### Integrations
 
-| Capability | Tier |
+| Integration | Tier |
 | --- | --- |
 | Polar Billing | Production-supported |
 | Azure AI Chat | Experimental — outside the support guarantee |
@@ -30,25 +30,25 @@ Deferred to a later portfolio: transactional email, file storage, background job
 
 Organization management and platform admin were **dropped** ([#9](https://github.com/solev/rocket/issues/9)). Core keeps organization-aware ownership; the optional management experience — lifecycle, switching, invitations, roles, admin UI — is not on this roadmap. Reviving it starts a fresh effort.
 
-## The capability contract
+## The integration contract
 
-A capability is ordinary localized TypeScript, not a manifest or plugin registration. It owns its configuration validation, availability check, operations, schema, technical endpoints, tests, and guide.
+An integration is ordinary localized TypeScript, not a manifest or plugin registration. It owns its configuration validation, availability check, operations, schema, technical endpoints, tests, and guide.
 
 Runtime rules:
 
 - absent configuration is valid and means **unavailable**
 - partial, malformed, or contradictory configuration **fails startup** with a clear error
 - the availability check is side-effect-free and never throws merely because configuration is absent
-- invoking unavailable behavior throws `CapabilityUnavailableError`, naming the capability and linking its guide, never exposing secrets
+- invoking unavailable behavior throws `IntegrationUnavailableError`, naming the integration and linking its guide, never exposing secrets
 - configuration stays server-only; loaders expose only safe facts such as `isBillingAvailable`
 - valid configuration means available — no separate enable flag unless the provider needs a real kill switch
-- mounted capabilities must protect their endpoints when unavailable
+- mounted integrations must protect their endpoints when unavailable
 
-Pages and navigation are **application-owned**. Capabilities report availability and enforce backend safety; they never auto-register or hide UI.
+Pages and navigation are **application-owned**. Integrations report availability and enforce backend safety; they never auto-register or hide UI.
 
-Schema lives with its capability, but Rocket keeps one normal chronological migration history. Migrations are never conditional. Removing a capability from an established application needs a developer-authored removal migration.
+Schema lives with its integration, but Rocket keeps one normal chronological migration history. Migrations are never conditional. Removing an integration from an established application needs a developer-authored removal migration.
 
-Every production-supported capability tests four states — absent, invalid, unavailable-invocation, and configured — using mocks, never real third-party accounts. Each has one guide covering configuration, availability, invocation, integration, and manual removal.
+Every production-supported integration tests four states — absent, invalid, unavailable-invocation, and configured — using mocks, never real third-party accounts. Each has one guide covering configuration, availability, invocation, wiring, and manual removal.
 
 ## Build status
 
@@ -56,10 +56,10 @@ Sections 1-3 below were implemented on `feat/roadmap-implementation`. Each item 
 
 ### 1. Quality foundation — done
 
-1. **Environment validation** — `app/lib/env/schema.ts` is the single source of truth, validated once at startup with `@t3-oss/env-core` and Zod. Empty strings are coerced to absent, so `|| ""` fallbacks cannot reappear. Capability variables are validated as all-or-nothing groups. `bun run env:check` fails when `.env.example` and the schema disagree. `resolveTestDatabaseUrl` refuses to run when `TEST_DATABASE_URL` is absent, equals `DATABASE_URL`, or names a database without `test` in it.
+1. **Environment validation** — `app/lib/env/schema.ts` is the single source of truth, validated once at startup with `@t3-oss/env-core` and Zod. Empty strings are coerced to absent, so `|| ""` fallbacks cannot reappear. Integration variables are validated as all-or-nothing groups. `bun run env:check` fails when `.env.example` and the schema disagree. `resolveTestDatabaseUrl` refuses to run when `TEST_DATABASE_URL` is absent, equals `DATABASE_URL`, or names a database without `test` in it.
 2. **Biome and one gate** — `biome.json` plus `bun run check`: format, lint, typecheck, env check, unit and DOM tests, integration tests, schema drift, production build. CI runs the same command. Tailwind v4 CSS is excluded from Biome, which cannot parse its at-rules.
-3. **Vitest** — three projects (`unit`, `dom`, `integration`). Integration tests run against a real PostgreSQL database with `fileParallelism` off, and the harness clears every capability variable so the suite always asserts the unconfigured state.
-4. **Playwright smoke journey** — `tests/e2e/smoke.spec.ts`: public page, protected redirect, signup, dashboard render, capability disabled state, logout, login. The web server starts with every optional provider explicitly blank.
+3. **Vitest** — three projects (`unit`, `dom`, `integration`). Integration tests run against a real PostgreSQL database with `fileParallelism` off, and the harness clears every integration variable so the suite always asserts the unconfigured state.
+4. **Playwright smoke journey** — `tests/e2e/smoke.spec.ts`: public page, protected redirect, signup, dashboard render, integration disabled state, logout, login. The web server starts with every optional provider explicitly blank.
 5. **Migration and drift checks** — `bun run db:drift` regenerates against the committed schema and fails on any difference; it also refuses to report while `drizzle/` has uncommitted changes. `bun run db:test:setup` builds the isolated test database from zero.
 6. **GitHub Actions** — four parallel jobs (static, test, e2e/build, security with CodeQL) plus grouped Dependabot updates.
 
@@ -70,9 +70,9 @@ Sections 1-3 below were implemented on `feat/roadmap-implementation`. Each item 
 - **Dead `two_factor` table kept, not dropped.** Better Auth's `twoFactor` plugin was never mounted and `user.twoFactorEnabled` was never added, so two-factor auth has never worked here. An earlier pass dropped the table as dead weight; that was reverted. Rocket is a starter, so its migrations run against every clone's database, and a clone that did mount the plugin would hold real secrets — a `DROP TABLE` in shared migration history destroys those with no way back. The table is declared in `schema.ts` instead, which keeps drift quiet and the schema honest. Shipping real 2FA remains a feature decision.
 - **Organization-aware ownership exists.** `organization` and `member` tables, `session.activeOrganizationId`, and provisioning through Better Auth database hooks. The Better Auth organization plugin is deliberately **not** mounted — management was dropped in [#9](https://github.com/solev/rocket/issues/9), and mounting it would expose create/invite/add-member endpoints nobody has decided how to lock down.
 
-### 3. Capability retrofit — done
+### 3. Integration retrofit — done
 
-Both capabilities are localized under `app/capabilities/`, split into a pure `config.ts` and a `*.server.ts` that binds it to the environment. Each has an availability check that never throws, throws `CapabilityUnavailableError` on unavailable invocation, protects its endpoints, and has a guide covering configuration, availability, invocation, integration, and manual removal.
+Both integrations are localized under `app/integrations/`, split into a pure `config.ts` and a `*.server.ts` that binds it to the environment. Each has an availability check that never throws, throws `IntegrationUnavailableError` on unavailable invocation, protects its endpoints, and has a guide covering configuration, availability, invocation, wiring, and manual removal.
 
 ### 4. Better Auth upgrade — done
 
@@ -98,11 +98,11 @@ Each is covered by a test that fails without the fix.
 - **Email verification is not wired up.** `emailAndPassword` does not require it, so enabling it is a product decision.
 - **`bun run check` does not include the smoke journey**, because Playwright needs a browser download. `bun run check:e2e` runs both; CI runs them in separate jobs.
 - **Rate-limit storage is in-memory.** Limits are per-process, so several instances multiply the effective limit and a restart clears it. Better Auth can store them in the database or Redis instead.
-- **The deferred capability backlog** — transactional email transport, file storage, background jobs, hosted observability, enterprise SSO and audit logging, deployment runbooks.
+- **The deferred integration backlog** — transactional email transport, file storage, background jobs, hosted observability, enterprise SSO and audit logging, deployment runbooks.
 
 ## Related documents
 
 - `CONTEXT.md` — glossary
 - `docs/agents/upstreaming.md` — how functionality built in a Rocket application is promoted into Rocket
 - `docs/protected-routes.md`
-- `docs/capabilities/billing.md`, `docs/capabilities/ai-chat.md`, `docs/capabilities/email.md`
+- `docs/integrations/billing.md`, `docs/integrations/ai-chat.md`, `docs/integrations/email.md`

@@ -2,7 +2,7 @@
 
 A foundation for **authenticated interactive web applications** — B2B tools, internal applications, SaaS products, and portals.
 
-Rocket applications start by cloning or forking. There is no generator and no upgrade automation: what Rocket promises is a Core that works, a capability contract, and documented manual removal.
+Rocket applications start by cloning or forking. There is no generator and no upgrade automation: what Rocket promises is a Core that works, an integration contract, and documented manual removal.
 
 - **Stack** — React Router 7 (SSR), PostgreSQL, Drizzle ORM, Better Auth, Tailwind CSS 4, shadcn/ui, Bun
 - **Roadmap and decisions** — [`docs/roadmap.md`](docs/roadmap.md)
@@ -18,7 +18,7 @@ bun run db:migrate
 bun run dev                  # http://localhost:5173
 ```
 
-Rocket runs with **every optional capability unconfigured**. Billing, AI chat, Google sign-in, and email are all absent by default, and the application is fully usable in that state.
+Rocket runs with **every optional integration unconfigured**. Billing, AI chat, Google sign-in, and email are all absent by default, and the application is fully usable in that state.
 
 ## What is in Core
 
@@ -30,24 +30,24 @@ Present in every Rocket application:
 - organization-aware data ownership, running in single-organization mode
 - the Quality foundation below
 
-## Capabilities
+## Integrations
 
-| Capability | Tier | Guide |
+| Integration | Tier | Guide |
 | --- | --- | --- |
-| Polar Billing | Production-supported | [`docs/capabilities/billing.md`](docs/capabilities/billing.md) |
-| Azure AI Chat | Experimental | [`docs/capabilities/ai-chat.md`](docs/capabilities/ai-chat.md) |
-| Transactional email | Deferred — seam only | [`docs/capabilities/email.md`](docs/capabilities/email.md) |
+| Polar Billing | Production-supported | [`docs/integrations/billing.md`](docs/integrations/billing.md) |
+| Azure AI Chat | Experimental | [`docs/integrations/ai-chat.md`](docs/integrations/ai-chat.md) |
+| Transactional email | Deferred — seam only | [`docs/integrations/email.md`](docs/integrations/email.md) |
 
-Absent configuration is valid and means **unavailable**. Partial configuration **fails at startup** rather than producing a half-working integration. Invoking unavailable behavior throws `CapabilityUnavailableError`, naming the capability and linking its guide without exposing secrets.
+Absent configuration is valid and means **unavailable**. Partial configuration **fails at startup** rather than producing a half-working integration. Invoking unavailable behavior throws `IntegrationUnavailableError`, naming the integration and linking its guide without exposing secrets.
 
-Pages and navigation are application-owned: capabilities report availability and protect their endpoints, but never auto-register or hide UI.
+Pages and navigation are application-owned: integrations report availability and protect their endpoints, but never auto-register or hide UI.
 
 ## Environment
 
 `app/lib/env/schema.ts` is the single source of truth. It is validated once at startup with `@t3-oss/env-core` and Zod.
 
 - empty strings are treated as absent, so there are no silent `|| ""` fallbacks
-- capability variables are validated as all-or-nothing groups
+- integration variables are validated as all-or-nothing groups
 - `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` are required in production
 - `bun run env:check` fails if `.env.example` and the schema disagree
 
@@ -103,7 +103,7 @@ bun run test:e2e
 
 `bun run db:up` provisions both `rocket` and `rocket_test` on first start.
 
-The Playwright journey covers the public page, the protected redirect, signup, dashboard render, logout, login, and one capability's disabled state — all with nothing configured.
+The Playwright journey covers the public page, the protected redirect, signup, dashboard render, logout, login, and one integration's disabled state — all with nothing configured.
 
 It runs against the **production build**, not the dev server: that is the artifact you deploy, and the dev server's dependency optimizer reloads the page the first time it meets a new import, which silently wiped half-filled forms. It also asserts the pages hydrate without browser errors, since a page whose hydration threw still screenshots perfectly while its buttons do nothing.
 
@@ -136,7 +136,7 @@ CREATE DATABASE rocket_test OWNER postgres;
 
 ## Migrations
 
-Rocket keeps one normal chronological migration history. Migrations are never conditional, and schema lives with the capability that owns it.
+Rocket keeps one normal chronological migration history. Migrations are never conditional, and schema lives with the integration that owns it.
 
 ```bash
 bun run db:generate    # after editing app/db/schema.ts
@@ -159,4 +159,4 @@ The server build is a standard Node application (`build/server/index.js`) with s
 
 ## Contributing back
 
-Functionality first built in a Rocket application that proves generally useful is promoted into Rocket as a capability or Core code. The process is in [`docs/agents/upstreaming.md`](docs/agents/upstreaming.md).
+Functionality first built in a Rocket application that proves generally useful is promoted into Rocket as an integration or Core code. The process is in [`docs/agents/upstreaming.md`](docs/agents/upstreaming.md).

@@ -1,12 +1,12 @@
 /**
- * Pure configuration logic for the Polar billing capability.
+ * Pure configuration logic for the Polar billing integration.
  *
  * Kept free of environment access and side effects so the availability
  * contract can be tested directly, without a live process environment.
  */
 
-export const BILLING_CAPABILITY = "Polar billing";
-export const BILLING_GUIDE = "docs/capabilities/billing.md";
+export const BILLING_INTEGRATION = "Polar billing";
+export const BILLING_GUIDE = "docs/integrations/billing.md";
 
 export interface BillingConfig {
   accessToken?: string;

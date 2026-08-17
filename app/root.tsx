@@ -26,7 +26,7 @@ export async function loader({ request }: Route.LoaderArgs) {
    * Vercel Web Analytics posts to an endpoint that only exists on Vercel.
    * Anywhere else the injected script 404s on every page load, which React
    * Router reports as an unmatched route, so it is treated like any other
-   * capability: on when the platform provides it, absent otherwise.
+   * integration: on when the platform provides it, absent otherwise.
    */
   return { theme, isAnalyticsAvailable: Boolean(env.VERCEL) };
 }

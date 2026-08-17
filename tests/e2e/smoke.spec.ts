@@ -2,8 +2,8 @@ import { type Locator, type Page, expect, test } from "@playwright/test";
 
 /**
  * The minimum journey a Rocket clone must survive with **no optional
- * capability configured**: public page, protected redirect, signup, dashboard,
- * logout, login, and one capability's disabled state.
+ * integration configured**: public page, protected redirect, signup, dashboard,
+ * logout, login, and one integration's disabled state.
  *
  * Each run signs up a fresh account so the journey is independent of database
  * state and safe to retry.
@@ -111,7 +111,7 @@ test.describe("smoke journey", () => {
     await page.waitForURL(/\/dashboard/, { timeout: 30_000 });
     await expect(page.getByText(email).first()).toBeVisible();
 
-    // Billing is unconfigured, so the capability must announce itself as
+    // Billing is unconfigured, so the integration must announce itself as
     // unavailable rather than erroring or vanishing.
     await page.goto("/dashboard/billing");
     await expect(page.getByText(/billing is not configured/i)).toBeVisible();

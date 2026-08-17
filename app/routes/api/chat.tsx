@@ -8,20 +8,20 @@ import {
 import { z } from "zod";
 
 import {
-  AI_CHAT_CAPABILITY,
+  AI_CHAT_INTEGRATION,
   AI_CHAT_GUIDE,
-} from "~/capabilities/ai-chat/config";
+} from "~/integrations/ai-chat/config";
 import {
   getChatModel,
   isAiChatAvailable,
-} from "~/capabilities/ai-chat/ai-chat.server";
+} from "~/integrations/ai-chat/ai-chat.server";
 import { withAuthAction } from "~/utils/guard.server";
 
 export const action = withAuthAction(async ({ request }) => {
   if (!isAiChatAvailable()) {
     return Response.json(
       {
-        error: `The "${AI_CHAT_CAPABILITY}" capability is not configured. See ${AI_CHAT_GUIDE}.`,
+        error: `The "${AI_CHAT_INTEGRATION}" integration is not configured. See ${AI_CHAT_GUIDE}.`,
       },
       { status: 503 },
     );

@@ -1,7 +1,7 @@
 # Rocket Starter
 
 Rocket is a reusable foundation for producing independently owned full-stack
-React Router applications with deliberate, supportable capability choices.
+React Router applications with deliberate, supportable integration choices.
 
 ## Language
 
@@ -13,9 +13,9 @@ _Avoid_: App, product
 An independently owned application started by cloning or forking Rocket and subsequently customized for its own product.
 _Avoid_: Generated application, Rocket instance
 
-**Capability**:
-A cohesive product or operational concern with explicit ownership of every artifact it contributes.
-_Avoid_: Feature, integration
+**Integration**:
+A selectable, never universal concern that is backed by external configuration or a third-party account, owns every artifact it contributes, and whose absence is a valid state rather than a fault.
+_Avoid_: Feature, plugin, capability
 
 **Upstream promotion**:
 The route by which functionality first built in one Rocket application is added to Rocket itself.
@@ -41,28 +41,28 @@ _Avoid_: CI setup, developer tooling
 An interactive Rocket application whose primary experience is user-specific and protected by sign-in.
 _Avoid_: SaaS app, internal tool, portal
 
-**Present capability**:
-A capability whose code and owned artifacts exist in a Rocket application, whether configured or not.
+**Present integration**:
+An integration whose code and owned artifacts exist in a Rocket application, whether configured or not.
 _Avoid_: Enabled feature
 
-**Active capability**:
-A present capability whose required runtime configuration is valid and whose behavior is available.
+**Active integration**:
+A present integration whose required runtime configuration is valid and whose behavior is available.
 _Avoid_: Installed feature
 
-**Mounted capability**:
-A capability integrated into shared runtime composition, such as framework plugins or technical endpoints, that must protect its owned behavior when inactive.
-_Avoid_: Always-on capability
+**Mounted integration**:
+An integration wired into shared runtime composition, such as framework plugins or technical endpoints, that must protect its owned behavior when inactive.
+_Avoid_: Always-on integration
 
-**Invoked service capability**:
-A capability whose behavior occurs only when application code explicitly calls it and which must report missing configuration clearly when called while inactive.
-_Avoid_: Utility integration
+**Invoked service integration**:
+An integration whose behavior occurs only when application code explicitly calls it and which must report missing configuration clearly when called while inactive.
+_Avoid_: Utility wrapper, helper
 
-**Capability seam**:
-A Core-owned interface that a deferred capability would implement, letting Core flows depend on the interface rather than on any provider.
+**Integration seam**:
+A Core-owned interface that a deferred integration would implement, letting Core flows depend on the interface rather than on any provider.
 _Avoid_: Adapter, shim, stub
 
 **Availability check**:
-The side-effect-free question of whether a capability's behavior can be invoked, which never fails merely because configuration is absent.
+The side-effect-free question of whether an integration's behavior can be invoked, which never fails merely because configuration is absent.
 _Avoid_: Health check, feature flag
 
 **Safe fact**:

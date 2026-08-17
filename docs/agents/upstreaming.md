@@ -26,9 +26,9 @@ Signals that it does not:
 
 Two questions, in this order.
 
-**1. Would every Rocket application want it?** If only some would, it must be optional, which makes it a Capability. If all would, it may be Core.
+**1. Would every Rocket application want it?** If only some would, it must be optional, which makes it an Integration. If all would, it may be Core.
 
-**2. Does it require external configuration or a third-party account?** If yes, it is a Capability regardless of how universally wanted it is, and owes the full capability contract below. If no, it can be ordinary Core code and owes only the Quality foundation.
+**2. Does it require external configuration or a third-party account?** If yes, it is an Integration regardless of how universally wanted it is, and owes the full integration contract below. If no, it can be ordinary Core code and owes only the Quality foundation.
 
 Anything that cannot clear its side of that line stays in the application that wrote it.
 
@@ -47,11 +47,11 @@ Pick by how ready the code is, not by how large it is.
 
 ## What an upstream PR must arrive with
 
-A Capability PR is only complete when it carries everything the capability contract requires:
+An Integration PR is only complete when it carries everything the integration contract requires:
 
 - a localized module that owns its provider-specific configuration and validation;
 - absent configuration treated as unavailable, with partial or malformed configuration failing startup;
-- a side-effect-free availability check, and `CapabilityUnavailableError` when unavailable behavior is invoked;
+- a side-effect-free availability check, and `IntegrationUnavailableError` when unavailable behavior is invoked;
 - colocated Drizzle schema plus a normal chronological migration;
 - tests covering absent, invalid, unavailable, and configured states, using mocks rather than real third-party accounts;
 - one guide covering configuration, availability, invocation, application integration, and manual removal.
@@ -61,5 +61,5 @@ A Core PR skips the configuration and availability items but still owes tests an
 ## Do not
 
 - Copy code between clones without filing anything. That is how two applications silently diverge.
-- Ship a Capability PR without its guide or removal instructions. An undocumented capability cannot be removed, and removability is the promise Rocket makes.
+- Ship an Integration PR without its guide or removal instructions. An undocumented integration cannot be removed, and removability is the promise Rocket makes.
 - Treat a merged PR as admission to the **supported portfolio**. What Rocket supports, and what it merely contains, is a roadmap decision made on the tracker — not something a PR decides on its own.
