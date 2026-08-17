@@ -74,11 +74,17 @@ Sections 1-3 below were implemented on `feat/roadmap-implementation`. Each item 
 
 Both capabilities are localized under `app/capabilities/`, split into a pure `config.ts` and a `*.server.ts` that binds it to the environment. Each has an availability check that never throws, throws `CapabilityUnavailableError` on unavailable invocation, protects its endpoints, and has a guide covering configuration, availability, invocation, integration, and manual removal.
 
+### 4. Better Auth upgrade — done
+
+Better Auth moved 1.3.7 → 1.6.29, which also forced `@polar-sh/better-auth` 1.1.0 → 1.8.4 (the old plugin no longer satisfies the `BetterAuthPlugin` type). `auth.api.forgetPassword` became `auth.api.requestPasswordReset`; the reset callback path is unchanged. Migration 0004 adds the indexes 1.6 generates by default and makes the verification timestamps `NOT NULL`, backfilling first so it applies to established databases too.
+
+This was deliberately done last: the upgrade needed a safety net, and the suite built in section 1 is what made it verifiable rather than hopeful. 1.6 also unlocks `organizationHooks` and dynamic access control, should organization management ever be revived.
+
 ### Still open
 
-- **Better Auth is pinned at 1.3.7** against a much newer stable line. Deliberately deferred: the upgrade needed a test safety net before it was worth attempting, and that net now exists. Later versions add `organizationHooks` and dynamic access control that an audit trail would need.
 - **Polar webhook routing is unverified.** `/polar/webhooks` forwards to `auth.handler`, but whether the Better Auth Polar plugin matches that path outside `/api/auth/*` has not been proven, and proving it needs a live Polar account — which the contract forbids in tests. The endpoint correctly refuses when the webhook secret is absent.
 - **Email verification is not wired up.** `emailAndPassword` does not require it, so enabling it is a product decision.
+- **`bun run check` does not include the smoke journey**, because Playwright needs a browser download. `bun run check:e2e` runs both; CI runs them in separate jobs.
 - **The deferred capability backlog** — transactional email transport, file storage, background jobs, hosted observability, enterprise SSO and audit logging, deployment runbooks.
 
 ## Related documents

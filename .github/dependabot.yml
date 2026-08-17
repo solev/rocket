@@ -22,10 +22,18 @@ updates:
           - "*"
     ignore:
       # Better Auth carries the session and organization contract; its upgrades
-      # get a deliberate, tested pass rather than an automated bump.
+      # get a deliberate, tested pass rather than an automated bump. Minor is
+      # ignored too, not just major: the 1.3 -> 1.6 upgrade renamed
+      # auth.api.forgetPassword and changed the generated schema, so its minors
+      # are breaking in practice.
       - dependency-name: better-auth
         update-types:
           - version-update:semver-major
+          - version-update:semver-minor
+      # The Polar plugin peers on a narrow better-auth range, so it can only
+      # move as part of that same deliberate pass.
+      - dependency-name: "@polar-sh/better-auth"
+      - dependency-name: "@polar-sh/sdk"
 
   - package-ecosystem: github-actions
     directory: /
