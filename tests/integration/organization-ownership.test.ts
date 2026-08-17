@@ -91,4 +91,27 @@ describe("single-organization mode", () => {
     expect(response.status).toBe(404);
     expect(await db.select().from(organization)).toHaveLength(0);
   });
+
+  /**
+   * Regression test. Slugs used to be disambiguated by counting upwards with a
+   * hard cap, so once enough people shared a display name the allocator ran
+   * out of candidates and signup failed outright with a server error.
+   */
+  it("lets many users with the same display name all sign up", async () => {
+    const count = 15;
+
+    for (let i = 0; i < count; i++) {
+      const result = await signUp(`namesake-${i}@example.com`, "John Smith");
+      expect(result.user).toBeDefined();
+    }
+
+    const organizations = await db.select().from(organization);
+    expect(organizations).toHaveLength(count);
+
+    const slugs = new Set(organizations.map((o) => o.slug));
+    expect(slugs.size).toBe(count);
+
+    const members = await db.select().from(member);
+    expect(members).toHaveLength(count);
+  });
 });

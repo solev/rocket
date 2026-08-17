@@ -15,8 +15,6 @@ import { SocialSignIn } from "~/components/auth/social-sign-in";
 import { authClient } from "~/lib/auth/auth.client";
 
 interface FormState {
-  email: string;
-  password: string;
   loading: boolean;
   error?: string;
 }
@@ -26,25 +24,27 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div"> & { isGoogleSignInAvailable?: boolean }) {
-  const [state, setState] = useState<FormState>({
-    email: "",
-    password: "",
-    loading: false,
-  });
+  const [state, setState] = useState<FormState>({ loading: false });
 
-  async function handleEmailPassword(e: React.FormEvent) {
+  async function handleEmailPassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setState((s) => ({ ...s, loading: true, error: undefined }));
+    // Read the DOM rather than component state: input typed before React
+    // hydrates never reaches state, and controlled inputs would then wipe it.
+    const form = new FormData(e.currentTarget);
+    setState({ loading: true });
     try {
       await authClient.signIn.email(
-        { email: state.email, password: state.password },
+        {
+          email: String(form.get("email") ?? ""),
+          password: String(form.get("password") ?? ""),
+        },
         {
           onError(ctx: { error?: { message?: string } | string }) {
             const message =
               typeof ctx.error === "string"
                 ? ctx.error
                 : (ctx.error?.message ?? "Login failed");
-            setState((s) => ({ ...s, loading: false, error: message }));
+            setState({ loading: false, error: message });
           },
           onSuccess() {
             window.location.href = "/";
@@ -52,11 +52,10 @@ export function LoginForm({
         },
       );
     } catch (error) {
-      setState((s) => ({
-        ...s,
+      setState({
         loading: false,
         error: error instanceof Error ? error.message : "Login failed",
-      }));
+      });
     }
   }
 
@@ -76,11 +75,9 @@ export function LoginForm({
               disabled={state.loading}
               label={state.loading ? "Signing in..." : "Login with Google"}
               dividerLabel="Or continue with"
-              onStart={() =>
-                setState((s) => ({ ...s, loading: true, error: undefined }))
-              }
+              onStart={() => setState({ loading: true })}
               onError={(message) =>
-                setState((s) => ({ ...s, loading: false, error: message }))
+                setState({ loading: false, error: message })
               }
             />
             <form onSubmit={handleEmailPassword} className="grid gap-6">
@@ -88,13 +85,10 @@ export function LoginForm({
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
-                  value={state.email}
-                  onChange={(e) =>
-                    setState((s) => ({ ...s, email: e.target.value }))
-                  }
                 />
               </div>
               <div className="grid gap-3">
@@ -107,15 +101,7 @@ export function LoginForm({
                     Forgot your password?
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={state.password}
-                  onChange={(e) =>
-                    setState((s) => ({ ...s, password: e.target.value }))
-                  }
-                />
+                <Input id="password" name="password" type="password" required />
               </div>
               <Button type="submit" className="w-full" disabled={state.loading}>
                 {state.loading ? "Signing in..." : "Login"}

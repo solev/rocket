@@ -15,9 +15,6 @@ import { SocialSignIn } from "~/components/auth/social-sign-in";
 import { authClient } from "~/lib/auth/auth.client";
 
 interface FormState {
-  name: string;
-  email: string;
-  password: string;
   loading: boolean;
   error?: string;
 }
@@ -27,22 +24,20 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div"> & { isGoogleSignInAvailable?: boolean }) {
-  const [state, setState] = useState<FormState>({
-    name: "",
-    email: "",
-    password: "",
-    loading: false,
-  });
+  const [state, setState] = useState<FormState>({ loading: false });
 
-  async function handleEmailSignup(e: React.FormEvent) {
+  async function handleEmailSignup(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setState((s) => ({ ...s, loading: true, error: undefined }));
+    // Read the DOM rather than component state: input typed before React
+    // hydrates never reaches state, and controlled inputs would then wipe it.
+    const form = new FormData(e.currentTarget);
+    setState({ loading: true });
     try {
       await authClient.signUp.email(
         {
-          email: state.email,
-          password: state.password,
-          name: state.name,
+          email: String(form.get("email") ?? ""),
+          password: String(form.get("password") ?? ""),
+          name: String(form.get("name") ?? ""),
           callbackURL: "/dashboard",
         },
         {
@@ -51,7 +46,7 @@ export function SignupForm({
               typeof ctx.error === "string"
                 ? ctx.error
                 : (ctx.error?.message ?? "Sign up failed");
-            setState((s) => ({ ...s, loading: false, error: message }));
+            setState({ loading: false, error: message });
           },
           onSuccess() {
             // Most setups auto-sign-in after sign up; still navigate explicitly
@@ -60,11 +55,10 @@ export function SignupForm({
         },
       );
     } catch (error) {
-      setState((s) => ({
-        ...s,
+      setState({
         loading: false,
         error: error instanceof Error ? error.message : "Sign up failed",
-      }));
+      });
     }
   }
 
@@ -82,11 +76,9 @@ export function SignupForm({
               disabled={state.loading}
               label={state.loading ? "Continuing…" : "Continue with Google"}
               dividerLabel="Or create with email"
-              onStart={() =>
-                setState((s) => ({ ...s, loading: true, error: undefined }))
-              }
+              onStart={() => setState({ loading: true })}
               onError={(message) =>
-                setState((s) => ({ ...s, loading: false, error: message }))
+                setState({ loading: false, error: message })
               }
             />
             <form onSubmit={handleEmailSignup} className="grid gap-6">
@@ -94,39 +86,30 @@ export function SignupForm({
                 <Label htmlFor="name">Username</Label>
                 <Input
                   id="name"
+                  name="name"
                   type="text"
                   placeholder="yourname"
                   required
-                  value={state.name}
-                  onChange={(e) =>
-                    setState((s) => ({ ...s, name: e.target.value }))
-                  }
                 />
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
-                  value={state.email}
-                  onChange={(e) =>
-                    setState((s) => ({ ...s, email: e.target.value }))
-                  }
                 />
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   minLength={8}
                   required
-                  value={state.password}
-                  onChange={(e) =>
-                    setState((s) => ({ ...s, password: e.target.value }))
-                  }
                 />
               </div>
               <Button type="submit" className="w-full" disabled={state.loading}>

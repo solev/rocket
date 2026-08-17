@@ -80,11 +80,24 @@ Better Auth moved 1.3.7 → 1.6.29, which also forced `@polar-sh/better-auth` 1.
 
 This was deliberately done last: the upgrade needed a safety net, and the suite built in section 1 is what made it verifiable rather than hopeful. 1.6 also unlocks `organizationHooks` and dynamic access control, should organization management ever be revived.
 
+### 5. Defects the smoke journey found — done
+
+Pointing the journey at the production build rather than the dev server turned up five real defects. None were visible in a screenshot, and none would have been found by reading the code.
+
+- **Auth rate limits put every user in one bucket.** Better Auth only trusts a single, explicitly named client-IP header, so without one it cannot tell callers apart. Rate limiting is on in production by default and `/sign-in/email` allows three attempts per ten seconds — meaning three failed sign-ins from anyone locked out everybody. `AUTH_IP_ADDRESS_HEADER` now names the header the proxy sets, and the smoke journey gives each test its own address so it exercises per-caller bucketing.
+- **The eleventh user sharing a display name could not sign up.** Organization slugs were disambiguated by counting upwards with a hard cap of ten, and exhausting it threw, failing signup. Allocation now tries a few readable candidates and then switches to a random token.
+- **Anything typed before hydration was silently discarded.** The login and signup forms were controlled by React state, so the first state update replaced whatever the user had typed with the empty initial state — submitting a blank form. Both forms are uncontrolled now and read `FormData` on submit.
+- **Vercel Web Analytics broke hydration everywhere except Vercel.** Its script 404s off-platform, React Router logged an unmatched route on every page load, and hydration failed with React error #418 — leaving pages that looked fine but had dead event handlers. It is now gated on the platform providing it.
+- **A cold `bun run dev` reloaded the page mid-hydration.** Vite's first crawl only sees the root route, so the first navigation discovered a second batch of dependencies and force-reloaded. `optimizeDeps.include` names them so it pre-bundles once.
+
+Each is covered by a test that fails without the fix.
+
 ### Still open
 
 - **Polar webhook routing is unverified.** `/polar/webhooks` forwards to `auth.handler`, but whether the Better Auth Polar plugin matches that path outside `/api/auth/*` has not been proven, and proving it needs a live Polar account — which the contract forbids in tests. The endpoint correctly refuses when the webhook secret is absent.
 - **Email verification is not wired up.** `emailAndPassword` does not require it, so enabling it is a product decision.
 - **`bun run check` does not include the smoke journey**, because Playwright needs a browser download. `bun run check:e2e` runs both; CI runs them in separate jobs.
+- **Rate-limit storage is in-memory.** Limits are per-process, so several instances multiply the effective limit and a restart clears it. Better Auth can store them in the database or Redis instead.
 - **The deferred capability backlog** — transactional email transport, file storage, background jobs, hosted observability, enterprise SSO and audit logging, deployment runbooks.
 
 ## Related documents

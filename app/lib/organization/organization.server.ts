@@ -4,7 +4,12 @@ import { nanoid } from "nanoid";
 import { db } from "~/db/client";
 import { member, organization } from "~/db/schema";
 
-import { nextSlugCandidate, organizationNameForUser, slugify } from "./naming";
+import {
+  nextSlugCandidate,
+  organizationNameForUser,
+  slugify,
+  tokenSlugCandidate,
+} from "./naming";
 
 /**
  * Organization-aware ownership, Core's universal data boundary.
@@ -15,6 +20,13 @@ import { nextSlugCandidate, organizationNameForUser, slugify } from "./naming";
  * management experience later never requires a data migration.
  */
 
+/**
+ * Readable candidates come first ("acme", "acme-2", ...) because a slug can end
+ * up in a URL. They are only tried a few times: display names repeat often
+ * enough that counting upwards would make every later namesake walk the whole
+ * sequence, and running out used to fail the signup outright.
+ */
+const READABLE_SLUG_ATTEMPTS = 5;
 const MAX_SLUG_ATTEMPTS = 10;
 
 /** Creates the organization a new user owns, and returns its id. */
@@ -27,7 +39,10 @@ export async function provisionOrganizationForUser(user: {
   const baseSlug = slugify(name);
 
   for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt++) {
-    const slug = nextSlugCandidate(baseSlug, attempt);
+    const slug =
+      attempt < READABLE_SLUG_ATTEMPTS
+        ? nextSlugCandidate(baseSlug, attempt)
+        : tokenSlugCandidate(baseSlug, nanoid(10));
 
     const [created] = await db
       .insert(organization)

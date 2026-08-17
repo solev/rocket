@@ -51,6 +51,20 @@ Pages and navigation are application-owned: capabilities report availability and
 - `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` are required in production
 - `bun run env:check` fails if `.env.example` and the schema disagree
 
+### Set `AUTH_IP_ADDRESS_HEADER` before you deploy
+
+Auth rate limits are keyed on the caller's IP, and Better Auth will only take
+that from a single header you name — it will not trust a forwarded chain,
+because behind an appending proxy the client controls the first entry.
+
+Leave it unset and it cannot tell callers apart, so everyone shares one bucket
+per path. Sign-in allows three attempts per ten seconds, so three failed
+sign-ins from any one person would lock out every user.
+
+Set it to a header your proxy **always overwrites** — `x-real-ip` for most
+reverse proxies, `cf-connecting-ip` behind Cloudflare, `fly-client-ip` on Fly.
+A header a client can forge is worse than none.
+
 ## Quality foundation
 
 `bun run check` is the single gate, locally and in CI:
@@ -85,6 +99,8 @@ bun run test:e2e
 `bun run db:up` provisions both `rocket` and `rocket_test` on first start.
 
 The Playwright journey covers the public page, the protected redirect, signup, dashboard render, logout, login, and one capability's disabled state — all with nothing configured.
+
+It runs against the **production build**, not the dev server: that is the artifact you deploy, and the dev server's dependency optimizer reloads the page the first time it meets a new import, which silently wiped half-filled forms. It also asserts the pages hydrate without browser errors, since a page whose hydration threw still screenshots perfectly while its buttons do nothing.
 
 ## Local PostgreSQL
 

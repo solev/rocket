@@ -41,3 +41,17 @@ export function nextSlugCandidate(base: string, attempt: number): string {
   const suffix = `-${attempt + 1}`;
   return `${base.slice(0, 48 - suffix.length)}${suffix}`;
 }
+
+/**
+ * Appends a caller-supplied random token instead of a counter.
+ *
+ * Counting upwards only stays cheap while collisions are rare. Display names
+ * repeat — every additional "John Smith" walks the whole sequence — so once the
+ * readable candidates are used up, allocation switches to a token wide enough
+ * that a collision is not worth planning for. The token is a parameter so this
+ * stays pure and testable.
+ */
+export function tokenSlugCandidate(base: string, token: string): string {
+  const suffix = `-${token}`;
+  return `${base.slice(0, 48 - suffix.length)}${suffix}`;
+}

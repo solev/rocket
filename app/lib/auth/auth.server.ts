@@ -31,6 +31,22 @@ export const auth = betterAuth({
   ...(env.BETTER_AUTH_SECRET ? { secret: env.BETTER_AUTH_SECRET } : {}),
   ...(env.BETTER_AUTH_URL ? { baseURL: env.BETTER_AUTH_URL } : {}),
 
+  /**
+   * Rate limits are only as good as the identity they are keyed on. Better
+   * Auth will not trust a comma-separated `x-forwarded-for` chain, because
+   * behind an appending proxy the leftmost entry is client-controlled — so
+   * unless a single trusted header is named, it cannot tell callers apart and
+   * buckets everyone together. Naming the header keeps one abusive caller from
+   * exhausting the limit for every other user.
+   */
+  ...(env.AUTH_IP_ADDRESS_HEADER
+    ? {
+        advanced: {
+          ipAddress: { ipAddressHeaders: [env.AUTH_IP_ADDRESS_HEADER] },
+        },
+      }
+    : {}),
+
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {

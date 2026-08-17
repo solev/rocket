@@ -4,6 +4,7 @@ import {
   nextSlugCandidate,
   organizationNameForUser,
   slugify,
+  tokenSlugCandidate,
 } from "~/lib/organization/naming";
 
 describe("organization naming", () => {
@@ -65,6 +66,21 @@ describe("organization naming", () => {
 
       expect(candidate.length).toBeLessThanOrEqual(48);
       expect(candidate.endsWith("-10")).toBe(true);
+    });
+  });
+
+  describe("tokenSlugCandidate", () => {
+    it("appends the token", () => {
+      expect(tokenSlugCandidate("acme", "V1StGXR8")).toBe("acme-V1StGXR8");
+    });
+
+    it("keeps the result within the slug length limit", () => {
+      const base = "a".repeat(48);
+
+      const slug = tokenSlugCandidate(base, "V1StGXR8Z5");
+
+      expect(slug.length).toBeLessThanOrEqual(48);
+      expect(slug.endsWith("-V1StGXR8Z5")).toBe(true);
     });
   });
 });

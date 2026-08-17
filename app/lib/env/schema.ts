@@ -32,6 +32,27 @@ export const coreServerShape = {
   BETTER_AUTH_SECRET: nonEmptyString.optional(),
   /** Absolute origin of the deployed application. Required in production. */
   BETTER_AUTH_URL: nonEmptyString.url().optional(),
+
+  /**
+   * The single request header your proxy sets to the real client IP, used to
+   * bucket auth rate limits per caller.
+   *
+   * Without it Better Auth cannot identify the caller and falls back to one
+   * shared bucket per path, so a handful of failed sign-ins from anyone locks
+   * out everyone. Values are platform-specific: `x-real-ip` for most reverse
+   * proxies, `cf-connecting-ip` behind Cloudflare, `fly-client-ip` on Fly.
+   *
+   * Name a header your proxy always overwrites. A client can forge any header
+   * the proxy passes through, and a forged value defeats the rate limit.
+   */
+  AUTH_IP_ADDRESS_HEADER: nonEmptyString.optional(),
+
+  /**
+   * Set automatically by Vercel. Web Analytics only has an endpoint to report
+   * to when the app is actually served by Vercel, so this decides whether the
+   * client script is worth loading at all.
+   */
+  VERCEL: nonEmptyString.optional(),
 } as const;
 
 /**
