@@ -69,7 +69,7 @@ describe("password reset without an email capability", () => {
       },
     });
 
-    await auth.api.forgetPassword({
+    await auth.api.requestPasswordReset({
       body: { email: EMAIL, redirectTo: "/reset-password" },
     });
 
@@ -82,7 +82,7 @@ describe("password reset without an email capability", () => {
     await signUp();
     const captured = captureResetLink();
 
-    await auth.api.forgetPassword({
+    await auth.api.requestPasswordReset({
       body: { email: EMAIL, redirectTo: "/reset-password" },
     });
 
@@ -95,7 +95,7 @@ describe("password reset without an email capability", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     await expect(
-      auth.api.forgetPassword({
+      auth.api.requestPasswordReset({
         body: { email: EMAIL, redirectTo: "/reset-password" },
       }),
     ).resolves.toBeDefined();
@@ -129,7 +129,7 @@ describe("password reset without an email capability", () => {
     await signUp();
     const captured = captureResetLink();
 
-    await auth.api.forgetPassword({
+    await auth.api.requestPasswordReset({
       body: { email: EMAIL, redirectTo: "/reset-password" },
     });
 

@@ -15,6 +15,9 @@ const testDatabaseUrl = resolveTestDatabaseUrl(
 
 process.env.DATABASE_URL = testDatabaseUrl;
 process.env.NODE_ENV = "test";
+// Better Auth derives the origin from the incoming request without this, which
+// makes callback and reset URLs depend on whichever request built them.
+process.env.BETTER_AUTH_URL ??= "http://localhost:5173";
 
 /**
  * Rocket's central promise is that a clone works with **no optional capability

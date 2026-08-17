@@ -40,7 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    await auth.api.forgetPassword({
+    await auth.api.requestPasswordReset({
       body: { email, redirectTo: "/reset-password" },
     });
   } catch (error) {

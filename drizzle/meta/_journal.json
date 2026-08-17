@@ -29,6 +29,13 @@
       "when": 1786954041577,
       "tag": "0003_orange_mesmero",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786957812032,
+      "tag": "0004_better_auth_1_6_alignment",
+      "breakpoints": true
     }
   ]
 }
