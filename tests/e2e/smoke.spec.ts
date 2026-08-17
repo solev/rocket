@@ -146,23 +146,35 @@ test.describe("smoke journey", () => {
 
   /**
    * Regression test. The auth forms used to be controlled by React state, so
-   * anything typed before hydration was discarded by the first state update
-   * and the user submitted an empty form. Throttling the CPU makes hydration
-   * reliably slow enough to type ahead of it.
+   * credentials typed into the server-rendered HTML never reached that state,
+   * and submitting sent an empty form.
+   *
+   * Holding the scripts back reproduces that deterministically — a slow
+   * connection rather than a slow machine — so it does not depend on winning a
+   * race against hydration.
    */
   test("credentials typed before hydration are not discarded", async ({
     page,
   }) => {
     const email = uniqueEmail();
-    const client = await page.context().newCDPSession(page);
-    await client.send("Emulation.setCPUThrottlingRate", { rate: 20 });
+    const scriptsReleased = 2_000;
+
+    // Registered after the beforeEach route, so it runs first; fallback() hands
+    // the request on to that one rather than ending the chain here.
+    await page.route("**/assets/*.js", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, scriptsReleased));
+      await route.fallback();
+    });
 
     await page.goto("/signup", { waitUntil: "commit" });
     await submitCredentials(page, { name: "Hydration Race", email });
+
+    // Only now let hydration finish, so the click is handled by React and any
+    // state it initialised has already replaced what was typed.
+    await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: /create account/i }).click();
 
-    await client.send("Emulation.setCPUThrottlingRate", { rate: 1 });
-    await page.waitForURL(/\/dashboard/, { timeout: 60_000 });
+    await page.waitForURL(/\/dashboard/, { timeout: 30_000 });
     await expect(page.getByText(email).first()).toBeVisible();
   });
 
