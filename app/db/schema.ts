@@ -86,6 +86,29 @@ export const verification = pgTable(
 );
 
 /**
+ * Better Auth's `twoFactor` plugin table.
+ *
+ * The plugin is **not mounted** — `user.twoFactorEnabled` was never added, so
+ * two-factor auth has never actually worked here. The table is nonetheless
+ * declared rather than dropped: Rocket is a starter, so its migrations run
+ * against every clone's database, and a downstream clone may well have mounted
+ * the plugin and collected real secrets. A `DROP TABLE` in shared migration
+ * history would destroy those with no way back.
+ *
+ * Declaring it keeps the schema honest about what exists and stops migration
+ * drift from proposing the drop on every generate. Mounting the plugin is a
+ * product decision; adding `twoFactorEnabled` is what it would take.
+ */
+export const twoFactor = pgTable("two_factor", {
+  id: text("id").primaryKey(),
+  secret: text("secret").notNull(),
+  backupCodes: text("backup_codes").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+/**
  * The ownership boundary every Rocket application scopes its data to.
  *
  * Organization-aware ownership is Core. In single-organization mode one
