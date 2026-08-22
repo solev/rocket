@@ -70,8 +70,13 @@ A header a client can forge is worse than none.
 `bun run check` is the single gate, locally and in CI:
 
 ```bash
-bun run check    # format:check, lint, typecheck, env:check, test, db:drift, build
+bun run check    # format:check, lint, typecheck, env:check, test, test:integration, db:drift, build
 ```
+
+`check` includes the integration suite, so it needs `TEST_DATABASE_URL` set — see
+[Integration and end-to-end tests](#integration-and-end-to-end-tests). Without it the
+run stops partway with a message about the missing variable, which reads like a broken
+test rather than an unset environment.
 
 | Command | Purpose |
 | --- | --- |
