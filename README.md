@@ -141,6 +141,8 @@ bun run db:drift       # verifies no ungenerated schema changes remain
 
 A migration that drops a table or column is destructive and gets explicit human review before it merges.
 
+Run `bun run db:migrate` after pulling or switching to a branch that adds migrations. An unmigrated database fails at the point the missing table is first queried, which surfaces as an unrelated-looking runtime error rather than a startup failure — a missing `organization` table, for example, shows up as a failed signup.
+
 ## Building for production
 
 ```bash
