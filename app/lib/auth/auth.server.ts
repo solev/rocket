@@ -123,11 +123,28 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (createdUser) => {
-          await resolveOrganizationIdForUser({
-            id: createdUser.id,
-            name: createdUser.name,
-            email: createdUser.email,
-          });
+          try {
+            await resolveOrganizationIdForUser({
+              id: createdUser.id,
+              name: createdUser.name,
+              email: createdUser.email,
+            });
+          } catch (error) {
+            // Better Auth has already committed the user row by the time this
+            // runs and does not roll it back when the hook throws. Left alone,
+            // the row reserves the address forever: no account row is ever
+            // written, so the person can neither sign in nor sign up again.
+            // Removing it makes a failed signup leave no trace, so retrying
+            // once the cause is fixed works.
+            await db
+              .delete(user)
+              .where(eq(user.id, createdUser.id))
+              .catch(() => {
+                // Surfacing the original cause matters more than this cleanup.
+              });
+
+            throw error;
+          }
         },
       },
     },
