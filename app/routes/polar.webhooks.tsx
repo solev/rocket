@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from "react-router";
-import { isBillingWebhookAvailable } from "~/capabilities/billing/billing.server";
+import { isBillingWebhookAvailable } from "~/integrations/billing/billing.server";
 import { auth } from "~/lib/auth/auth.server";
 
 /**

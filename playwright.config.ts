@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * The smoke journey runs against a real server and the integration-test
- * database, with **every optional capability unconfigured** — that is the
+ * database, with **every optional integration unconfigured** — that is the
  * configuration Rocket promises a fresh clone can run.
  */
 
@@ -59,7 +59,7 @@ export default defineConfig({
       // what keeps these tests independent of each other.
       AUTH_IP_ADDRESS_HEADER: "x-real-ip",
       // Deliberately empty: the smoke journey proves Rocket runs with no
-      // optional capability configured.
+      // optional integration configured.
       POLAR_ACCESS_TOKEN: "",
       AZURE_OPENAI_RESOURCE_NAME: "",
       AZURE_OPENAI_API_KEY: "",

@@ -11,7 +11,7 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { withAuthLoader } from "~/utils/guard.server";
-import { isBillingAvailable } from "~/capabilities/billing/billing.server";
+import { isBillingAvailable } from "~/integrations/billing/billing.server";
 
 type BillingClientData = {
   active: boolean;

@@ -15,4 +15,4 @@ Domain documentation uses the single-context layout. See `docs/agents/domain.md`
 ### Upstreaming
 
 Functionality built in a Rocket application that proves generally useful is promoted back into
-Rocket as a capability or Core code. See `docs/agents/upstreaming.md`.
+Rocket as an integration or Core code. See `docs/agents/upstreaming.md`.

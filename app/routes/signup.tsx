@@ -8,7 +8,7 @@ import type { Route } from "./+types/signup";
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await getUser(request);
   if (user) throw redirect("/dashboard");
-  // Capability availability is resolved on the server so the client never
+  // Integration availability is resolved on the server so the client never
   // renders a provider button that cannot work.
   return { isGoogleSignInAvailable };
 }

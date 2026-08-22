@@ -1,10 +1,10 @@
 import { createAzure } from "@ai-sdk/azure";
 
-import { CapabilityUnavailableError } from "~/lib/capability";
+import { IntegrationUnavailableError } from "~/lib/integration";
 import { env } from "~/lib/env/env.server";
 
 import {
-  AI_CHAT_CAPABILITY,
+  AI_CHAT_INTEGRATION,
   AI_CHAT_GUIDE,
   type AiChatConfig,
   isAiChatAvailable as isAvailable,
@@ -28,11 +28,11 @@ export function isAiChatAvailable(): boolean {
  * AI SDK 6+ defaults to Azure's Responses API; `.chat()` keeps the existing
  * Chat Completions behavior so current deployments continue to work.
  *
- * @throws {CapabilityUnavailableError} when Azure AI Chat is not configured.
+ * @throws {IntegrationUnavailableError} when Azure AI Chat is not configured.
  */
 export function getChatModel() {
   if (!isAiChatAvailable()) {
-    throw new CapabilityUnavailableError(AI_CHAT_CAPABILITY, AI_CHAT_GUIDE);
+    throw new IntegrationUnavailableError(AI_CHAT_INTEGRATION, AI_CHAT_GUIDE);
   }
 
   const azure = createAzure({

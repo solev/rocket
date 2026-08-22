@@ -8,7 +8,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import {
   type PolarCustomerState,
   getCustomerState,
-} from "~/capabilities/billing/billing.server";
+} from "~/integrations/billing/billing.server";
 import { getUser, requireAuth } from "~/lib/auth/require-auth.server";
 
 // Type helpers derived from our auth helpers (no `any`)

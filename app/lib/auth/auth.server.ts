@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { eq } from "drizzle-orm";
 
-import { createBillingPlugin } from "~/capabilities/billing/billing.server";
+import { createBillingPlugin } from "~/integrations/billing/billing.server";
 import { db } from "~/db/client";
 import {
   account,
@@ -64,7 +64,7 @@ export const auth = betterAuth({
     /**
      * Routed through Core's email seam. With no transport configured this
      * prints the link to the console in development and refuses in
-     * production — never a silent no-op. See docs/capabilities/email.md.
+     * production — never a silent no-op. See docs/integrations/email.md.
      */
     sendResetPassword: async ({ user: recipient, url }) => {
       // Better Auth emits a relative URL when no baseURL is configured, which

@@ -18,7 +18,7 @@ function issuePaths(result: ReturnType<typeof parseServerEnv>) {
 }
 
 describe("core environment", () => {
-  it("accepts a minimal configuration with every capability absent", () => {
+  it("accepts a minimal configuration with every integration absent", () => {
     const result = parseServerEnv(baseEnv());
 
     expect(result.success).toBe(true);

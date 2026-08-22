@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Every job runs with all optional capabilities unconfigured: that is the
+  # Every job runs with all optional integrations unconfigured: that is the
   # configuration a fresh clone must survive.
   BETTER_AUTH_SECRET: ci-secret-not-for-production
 

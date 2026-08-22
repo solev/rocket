@@ -2,7 +2,7 @@ import { Button } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/auth.client";
 
 /**
- * Social sign-in is capability-gated: a provider whose credentials are absent
+ * Social sign-in is integration-gated: a provider whose credentials are absent
  * is not registered on the server, so rendering its button would produce a
  * control that can only fail. Availability is resolved server-side and passed
  * down; when nothing is available this renders nothing at all, divider

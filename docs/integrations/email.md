@@ -52,7 +52,7 @@ setEmailTransport({
 });
 ```
 
-If you add provider credentials, add them to `app/lib/env/schema.ts` as an all-or-nothing capability group and mirror them in `.env.example`, exactly as Polar and Azure do. `bun run env:check` enforces that the example file matches the schema.
+If you add provider credentials, add them to `app/lib/env/schema.ts` as an all-or-nothing integration group and mirror them in `.env.example`, exactly as Polar and Azure do. `bun run env:check` enforces that the example file matches the schema.
 
 ## What routes through it
 
@@ -70,7 +70,7 @@ Better Auth's own `forgetPassword` endpoint varies its response body between kno
 
 ## Manual removal
 
-The seam is Core, not an optional capability. Removing it means removing password reset:
+The seam is Core, not an optional integration. Removing it means removing password reset:
 
 1. Delete `app/routes/forgot-password.tsx` and `app/routes/reset-password.tsx` and their entries in `app/routes.ts`.
 2. Remove the "Forgot your password?" link from `app/components/login-form.tsx`.

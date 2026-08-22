@@ -1,28 +1,28 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  BILLING_CAPABILITY,
+  BILLING_INTEGRATION,
   BILLING_GUIDE,
   type BillingConfig,
   areWebhooksAvailable,
   isBillingAvailable,
   isProCheckoutAvailable,
-} from "~/capabilities/billing/config";
+} from "~/integrations/billing/config";
 import {
-  AI_CHAT_CAPABILITY,
+  AI_CHAT_INTEGRATION,
   AI_CHAT_GUIDE,
   type AiChatConfig,
   DEFAULT_DEPLOYMENT_NAME,
   isAiChatAvailable,
   resolveDeploymentName,
-} from "~/capabilities/ai-chat/config";
+} from "~/integrations/ai-chat/config";
 import {
-  CapabilityUnavailableError,
-  requireCapability,
-} from "~/lib/capability";
+  IntegrationUnavailableError,
+  requireIntegration,
+} from "~/lib/integration";
 
 /**
- * Every capability must behave identically across four states:
+ * Every integration must behave identically across four states:
  *
  * 1. absent        — no configuration at all; the app still works
  * 2. partial       — rejected at startup by env validation (see env-schema tests)
@@ -45,29 +45,29 @@ const CONFIGURED_AI: AiChatConfig = {
   apiKey: "azure-key",
 };
 
-describe("capability contract", () => {
-  describe("CapabilityUnavailableError", () => {
-    it("names the capability and points at its guide", () => {
-      const error = new CapabilityUnavailableError(
-        BILLING_CAPABILITY,
+describe("integration contract", () => {
+  describe("IntegrationUnavailableError", () => {
+    it("names the integration and points at its guide", () => {
+      const error = new IntegrationUnavailableError(
+        BILLING_INTEGRATION,
         BILLING_GUIDE,
       );
 
-      expect(error.name).toBe("CapabilityUnavailableError");
-      expect(error.capability).toBe(BILLING_CAPABILITY);
-      expect(error.message).toContain(BILLING_CAPABILITY);
+      expect(error.name).toBe("IntegrationUnavailableError");
+      expect(error.integration).toBe(BILLING_INTEGRATION);
+      expect(error.message).toContain(BILLING_INTEGRATION);
       expect(error.message).toContain(BILLING_GUIDE);
     });
 
     it("still guides the reader when no guide is supplied", () => {
-      const error = new CapabilityUnavailableError("Something");
+      const error = new IntegrationUnavailableError("Something");
 
-      expect(error.message).toContain("capability guide");
+      expect(error.message).toContain("integration guide");
     });
 
     it("never leaks a configuration value", () => {
-      const error = new CapabilityUnavailableError(
-        BILLING_CAPABILITY,
+      const error = new IntegrationUnavailableError(
+        BILLING_INTEGRATION,
         BILLING_GUIDE,
       );
 
@@ -75,26 +75,26 @@ describe("capability contract", () => {
     });
   });
 
-  describe("requireCapability", () => {
-    it("returns the value when the capability is available", () => {
+  describe("requireIntegration", () => {
+    it("returns the value when the integration is available", () => {
       const client = { id: "client" };
 
-      expect(requireCapability("Billing", client)).toBe(client);
+      expect(requireIntegration("Billing", client)).toBe(client);
     });
 
     it.each([
       ["null", null],
       ["undefined", undefined],
     ])("throws for %s", (_label, value) => {
-      expect(() => requireCapability("Billing", value, BILLING_GUIDE)).toThrow(
-        CapabilityUnavailableError,
+      expect(() => requireIntegration("Billing", value, BILLING_GUIDE)).toThrow(
+        IntegrationUnavailableError,
       );
     });
 
     it("does not treat falsy-but-present values as absent", () => {
-      expect(requireCapability("Billing", 0)).toBe(0);
-      expect(requireCapability("Billing", "")).toBe("");
-      expect(requireCapability("Billing", false)).toBe(false);
+      expect(requireIntegration("Billing", 0)).toBe(0);
+      expect(requireIntegration("Billing", "")).toBe("");
+      expect(requireIntegration("Billing", false)).toBe(false);
     });
   });
 
@@ -172,8 +172,8 @@ describe("capability contract", () => {
     });
 
     it("points at its own guide", () => {
-      const error = new CapabilityUnavailableError(
-        AI_CHAT_CAPABILITY,
+      const error = new IntegrationUnavailableError(
+        AI_CHAT_INTEGRATION,
         AI_CHAT_GUIDE,
       );
 

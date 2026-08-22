@@ -2,7 +2,7 @@
  * Core's transactional email seam.
  *
  * Rocket ships no email transport: transactional email is a deferred backlog
- * capability. Core flows that would otherwise depend on one — password reset
+ * integration. Core flows that would otherwise depend on one — password reset
  * above all — route through this seam so they degrade predictably instead of
  * failing silently.
  *
@@ -33,8 +33,8 @@ export class EmailDeliveryUnavailableError extends Error {
   constructor() {
     super(
       "No email transport is configured, so this message cannot be delivered. " +
-        "Transactional email is a deferred Rocket capability: implement EmailTransport and call " +
-        "setEmailTransport() during server start-up. See docs/capabilities/email.md.",
+        "Transactional email is a deferred Rocket integration: implement EmailTransport and call " +
+        "setEmailTransport() during server start-up. See docs/integrations/email.md.",
     );
     this.name = "EmailDeliveryUnavailableError";
   }

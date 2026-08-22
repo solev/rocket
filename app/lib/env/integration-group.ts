@@ -9,16 +9,16 @@ export const nonEmptyString = z.string().min(1);
 /**
  * Declares that a group of variables must be supplied together.
  *
- * Absent configuration is valid and means the capability is unavailable;
+ * Absent configuration is valid and means the integration is unavailable;
  * partial configuration is an error rather than a degraded state.
  */
-export interface CapabilityGroup {
-  capability: string;
+export interface IntegrationGroup {
+  integration: string;
   keys: readonly string[];
 }
 
-export function refineCapabilityGroups(
-  groups: readonly CapabilityGroup[],
+export function refineIntegrationGroups(
+  groups: readonly IntegrationGroup[],
   value: Record<string, unknown>,
   ctx: z.RefinementCtx,
 ): void {
@@ -32,7 +32,7 @@ export function refineCapabilityGroups(
         code: "custom",
         path: [key],
         message:
-          `The "${group.capability}" capability is partially configured. ` +
+          `The "${group.integration}" integration is partially configured. ` +
           `Set all of ${group.keys.join(", ")} to enable it, or none of them to leave it unavailable. ` +
           `Missing: ${missing.join(", ")}.`,
       });

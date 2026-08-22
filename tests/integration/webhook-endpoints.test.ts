@@ -3,28 +3,28 @@ import { describe, expect, it } from "vitest";
 import {
   isAiChatAvailable,
   getChatModel,
-} from "~/capabilities/ai-chat/ai-chat.server";
+} from "~/integrations/ai-chat/ai-chat.server";
 import {
   isBillingAvailable,
   isBillingWebhookAvailable,
   createBillingPlugin,
   getCustomerState,
   getPolarClient,
-} from "~/capabilities/billing/billing.server";
-import { CapabilityUnavailableError } from "~/lib/capability";
+} from "~/integrations/billing/billing.server";
+import { IntegrationUnavailableError } from "~/lib/integration";
 import {
   action as webhookAction,
   loader as webhookLoader,
 } from "~/routes/polar.webhooks";
 
 /**
- * The integration environment configures no optional capability, so this file
+ * The integration environment configures no optional integration, so this file
  * asserts the guarantee Rocket makes to a fresh clone: unconfigured
- * capabilities are inert, their endpoints refuse, and nothing crashes.
+ * integrations are inert, their endpoints refuse, and nothing crashes.
  */
 
-describe("unconfigured capabilities", () => {
-  it("reports every optional capability as unavailable", () => {
+describe("unconfigured integrations", () => {
+  it("reports every optional integration as unavailable", () => {
     expect(isBillingAvailable()).toBe(false);
     expect(isBillingWebhookAvailable()).toBe(false);
     expect(isAiChatAvailable()).toBe(false);
@@ -41,8 +41,8 @@ describe("unconfigured capabilities", () => {
   it.each([
     ["Polar client", () => getPolarClient()],
     ["Azure chat model", () => getChatModel()],
-  ])("throws CapabilityUnavailableError for the %s", (_label, invoke) => {
-    expect(invoke).toThrow(CapabilityUnavailableError);
+  ])("throws IntegrationUnavailableError for the %s", (_label, invoke) => {
+    expect(invoke).toThrow(IntegrationUnavailableError);
   });
 
   it("refuses webhook deliveries it cannot verify", async () => {

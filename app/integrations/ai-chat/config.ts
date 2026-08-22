@@ -1,12 +1,12 @@
 /**
- * Pure configuration logic for the Azure AI Chat capability.
+ * Pure configuration logic for the Azure AI Chat integration.
  *
- * Experimental: this capability is outside Rocket's production-support
- * guarantee. See `docs/capabilities/ai-chat.md` for its coverage gaps.
+ * Experimental: this integration is outside Rocket's production-support
+ * guarantee. See `docs/integrations/ai-chat.md` for its coverage gaps.
  */
 
-export const AI_CHAT_CAPABILITY = "Azure AI Chat";
-export const AI_CHAT_GUIDE = "docs/capabilities/ai-chat.md";
+export const AI_CHAT_INTEGRATION = "Azure AI Chat";
+export const AI_CHAT_GUIDE = "docs/integrations/ai-chat.md";
 
 export const DEFAULT_DEPLOYMENT_NAME = "gpt-5-chat";
 
