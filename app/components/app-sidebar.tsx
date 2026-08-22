@@ -1,28 +1,25 @@
-import * as React from "react"
+import type * as React from "react";
 import {
   AudioWaveform,
-  BookOpen,
-  Bot,
   Command,
   Frame,
   GalleryVerticalEnd,
-  Map,
+  Map as MapIcon,
   PieChart,
-  Settings2,
   SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "~/components/nav-main"
-import { NavProjects } from "~/components/nav-projects"
-import { NavUser } from "~/components/nav-user"
-import { TeamSwitcher } from "~/components/team-switcher"
+import { NavMain } from "~/components/nav-main";
+import { NavProjects } from "~/components/nav-projects";
+import { NavUser } from "~/components/nav-user";
+import { TeamSwitcher } from "~/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "~/components/ui/sidebar"
+} from "~/components/ui/sidebar";
 
 // Static navigation sample data (can be replaced with real app data later)
 const staticData = {
@@ -70,7 +67,6 @@ const staticData = {
         },
       ],
     },
-    
   ],
   projects: [
     {
@@ -86,25 +82,27 @@ const staticData = {
     {
       name: "Travel",
       url: "#",
-      icon: Map,
+      icon: MapIcon,
     },
   ],
-}
+};
 
 export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: {
-    name?: string | null
-    email?: string | null
-    avatar?: string | null
-  }
+    name?: string | null;
+    email?: string | null;
+    avatar?: string | null;
+  };
 }
 
 export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const effectiveUser = {
     name: user?.name || user?.email || "User",
     email: user?.email || "unknown",
-    avatar: user?.avatar || "/avatars/shadcn.jpg", // fallback placeholder
-  }
+    // No placeholder image: a missing avatar falls through to initials rather
+    // than requesting a file that does not exist.
+    avatar: user?.avatar || null,
+  };
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -119,5 +117,5 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

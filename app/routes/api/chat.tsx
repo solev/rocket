@@ -7,24 +7,30 @@ import {
 } from "ai";
 import { z } from "zod";
 
-import { getModel, isAiConfigured } from "~/lib/ai/providers";
+import {
+  AI_CHAT_CAPABILITY,
+  AI_CHAT_GUIDE,
+} from "~/capabilities/ai-chat/config";
+import {
+  getChatModel,
+  isAiChatAvailable,
+} from "~/capabilities/ai-chat/ai-chat.server";
 import { withAuthAction } from "~/utils/guard.server";
 
 export const action = withAuthAction(async ({ request }) => {
-  if (!isAiConfigured()) {
+  if (!isAiChatAvailable()) {
     return Response.json(
       {
-        error:
-          "Azure OpenAI is not configured. Set AZURE_OPENAI_RESOURCE_NAME and AZURE_OPENAI_API_KEY.",
+        error: `The "${AI_CHAT_CAPABILITY}" capability is not configured. See ${AI_CHAT_GUIDE}.`,
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 
   const { messages }: { messages: UIMessage[] } = await request.json();
 
   const result = streamText({
-    model: getModel(),
+    model: getChatModel(),
     messages: await convertToModelMessages(messages),
     stopWhen: isStepCount(5),
     tools: {

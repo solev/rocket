@@ -50,45 +50,59 @@ Schema lives with its capability, but Rocket keeps one normal chronological migr
 
 Every production-supported capability tests four states — absent, invalid, unavailable-invocation, and configured — using mocks, never real third-party accounts. Each has one guide covering configuration, availability, invocation, integration, and manual removal.
 
-## To be built
+## Build status
 
-Nothing below is implemented yet. Ordered by dependency: each step makes the next verifiable.
+Sections 1-3 below were implemented on `feat/roadmap-implementation`. Each item records what shipped, so the remaining work is visible without re-reading the tickets.
 
-### 1. Quality foundation
+### 1. Quality foundation — done
 
-The gate everything else is checked by, so it comes first.
+1. **Environment validation** — `app/lib/env/schema.ts` is the single source of truth, validated once at startup with `@t3-oss/env-core` and Zod. Empty strings are coerced to absent, so `|| ""` fallbacks cannot reappear. Capability variables are validated as all-or-nothing groups. `bun run env:check` fails when `.env.example` and the schema disagree. `resolveTestDatabaseUrl` refuses to run when `TEST_DATABASE_URL` is absent, equals `DATABASE_URL`, or names a database without `test` in it.
+2. **Biome and one gate** — `biome.json` plus `bun run check`: format, lint, typecheck, env check, unit and DOM tests, integration tests, schema drift, production build. CI runs the same command. Tailwind v4 CSS is excluded from Biome, which cannot parse its at-rules.
+3. **Vitest** — three projects (`unit`, `dom`, `integration`). Integration tests run against a real PostgreSQL database with `fileParallelism` off, and the harness clears every capability variable so the suite always asserts the unconfigured state.
+4. **Playwright smoke journey** — `tests/e2e/smoke.spec.ts`: public page, protected redirect, signup, dashboard render, capability disabled state, logout, login. The web server starts with every optional provider explicitly blank.
+5. **Migration and drift checks** — `bun run db:drift` regenerates against the committed schema and fails on any difference; it also refuses to report while `drizzle/` has uncommitted changes. `bun run db:test:setup` builds the isolated test database from zero.
+6. **GitHub Actions** — four parallel jobs (static, test, e2e/build, security with CodeQL) plus grouped Dependabot updates.
 
-1. Centralized environment validation (`@t3-oss/env-core` + Zod), server/client split, no silent empty-string fallbacks, `.env.example` checked against the schema — plus a test-database safety guard that refuses to run against the development database.
-2. Biome for formatting and linting, and `bun run check` as the single local and CI entry point.
-3. Vitest, with React Router route/loader/action integration tests and PostgreSQL integration tests against a dedicated `TEST_DATABASE_URL`.
-4. A minimum Playwright smoke journey: public page, protected redirect, signup, login, logout, dashboard render, and one capability's disabled state.
-5. Migration and schema-drift checks — a fresh database must migrate from zero before tests run.
-6. GitHub Actions in four parallel jobs (static, test, e2e/build, security), plus dependency updates and CodeQL.
+### 2. Core correctness — done
 
-**Done when** a fresh clone can install, validate configuration, migrate an isolated test database, exercise auth and route boundaries, build production assets, and pass the same `bun run check` locally and in CI — with **every** optional provider unconfigured.
+- **Password reset now works** ([#12](https://github.com/solev/rocket/issues/12)). `/forgot-password` and `/reset-password/:token` exist and are linked from the login form. Delivery routes through `app/lib/email/delivery.server.ts`, which logs the link in development and refuses in production rather than dropping mail silently.
+- **Google provider is honestly gated.** Absent credentials mean the provider is never registered and its button never renders; partial credentials fail startup. Availability is resolved server-side and passed to the browser as a boolean.
+- **Dead `two_factor` table kept, not dropped.** Better Auth's `twoFactor` plugin was never mounted and `user.twoFactorEnabled` was never added, so two-factor auth has never worked here. An earlier pass dropped the table as dead weight; that was reverted. Rocket is a starter, so its migrations run against every clone's database, and a clone that did mount the plugin would hold real secrets — a `DROP TABLE` in shared migration history destroys those with no way back. The table is declared in `schema.ts` instead, which keeps drift quiet and the schema honest. Shipping real 2FA remains a feature decision.
+- **Organization-aware ownership exists.** `organization` and `member` tables, `session.activeOrganizationId`, and provisioning through Better Auth database hooks. The Better Auth organization plugin is deliberately **not** mounted — management was dropped in [#9](https://github.com/solev/rocket/issues/9), and mounting it would expose create/invite/add-member endpoints nobody has decided how to lock down.
 
-### 2. Core correctness
+### 3. Capability retrofit — done
 
-Existing code that does not yet meet the contract above.
+Both capabilities are localized under `app/capabilities/`, split into a pure `config.ts` and a `*.server.ts` that binds it to the environment. Each has an availability check that never throws, throws `CapabilityUnavailableError` on unavailable invocation, protects its endpoints, and has a guide covering configuration, availability, invocation, integration, and manual removal.
 
-- **[#12](https://github.com/solev/rocket/issues/12) Password reset is unreachable.** `emailAndPassword` is enabled with no mail transport and no `sendResetPassword` handler, so a user who forgets their password has no recovery path.
-- **Google provider is always "configured".** `clientId: process.env.GOOGLE_CLIENT_ID || ""` makes the provider appear available with empty credentials — exactly the silent empty-string fallback the environment contract forbids. Absent should mean unavailable; partial should fail startup.
-- **Dead `two_factor` table.** The table is defined in `app/db/schema.ts` and passed to the Drizzle adapter, but the `twoFactor()` plugin is never mounted. Either mount it or drop the table.
-- **Better Auth is pinned well behind.** `bun.lock` holds 1.3.7 against a much newer stable line; later versions add hook surfaces that any future audit trail would need.
-- **Organization-aware ownership needs to actually exist.** It is Core by decision, but no organization table, membership, or ownership scoping is implemented yet.
+### 4. Better Auth upgrade — done
 
-### 3. Retrofit the capabilities
+Better Auth moved 1.3.7 → 1.6.29, which also forced `@polar-sh/better-auth` 1.1.0 → 1.8.4 (the old plugin no longer satisfies the `BetterAuthPlugin` type). `auth.api.forgetPassword` became `auth.api.requestPasswordReset`; the reset callback path is unchanged. Migration 0004 adds the indexes 1.6 generates by default and makes the verification timestamps `NOT NULL`, backfilling first so it applies to established databases too.
 
-Polar Billing and Azure AI Chat both predate the contract and neither satisfies it. Polar is closest — it already gates on configuration and mounts conditionally.
+This was deliberately done last: the upgrade needed a safety net, and the suite built in section 1 is what made it verifiable rather than hopeful. 1.6 also unlocks `organizationHooks` and dynamic access control, should organization management ever be revived.
 
-Each needs: a localized module, availability checks, `CapabilityUnavailableError` on unavailable invocation, the four-state tests, and one guide including manual removal. Azure AI Chat must additionally document its experimental coverage gaps.
+### 5. Defects the smoke journey found — done
 
-### 4. Later
+Pointing the journey at the production build rather than the dev server turned up five real defects. None were visible in a screenshot, and none would have been found by reading the code.
 
-Revisit the deferred backlog only once the contract is proven by the capabilities above. Admission is governed by `docs/agents/upstreaming.md`; support tier remains a roadmap decision.
+- **Auth rate limits put every user in one bucket.** Better Auth only trusts a single, explicitly named client-IP header, so without one it cannot tell callers apart. Rate limiting is on in production by default and `/sign-in/email` allows three attempts per ten seconds — meaning three failed sign-ins from anyone locked out everybody. `AUTH_IP_ADDRESS_HEADER` now names the header the proxy sets, and the smoke journey gives each test its own address so it exercises per-caller bucketing.
+- **The eleventh user sharing a display name could not sign up.** Organization slugs were disambiguated by counting upwards with a hard cap of ten, and exhausting it threw, failing signup. Allocation now tries a few readable candidates and then switches to a random token.
+- **Anything typed before hydration was silently discarded.** The login and signup forms were controlled by React state, so the first state update replaced whatever the user had typed with the empty initial state — submitting a blank form. Both forms are uncontrolled now and read `FormData` on submit.
+- **Vercel Web Analytics broke hydration everywhere except Vercel.** Its script 404s off-platform, React Router logged an unmatched route on every page load, and hydration failed with React error #418 — leaving pages that looked fine but had dead event handlers. It is now gated on the platform providing it.
+- **A cold `bun run dev` reloaded the page mid-hydration.** Vite's first crawl only sees the root route, so the first navigation discovered a second batch of dependencies and force-reloaded. `optimizeDeps.include` names them so it pre-bundles once.
+
+Each is covered by a test that fails without the fix.
+
+### Still open
+
+- **Polar webhook routing is unverified.** `/polar/webhooks` forwards to `auth.handler`, but whether the Better Auth Polar plugin matches that path outside `/api/auth/*` has not been proven, and proving it needs a live Polar account — which the contract forbids in tests. The endpoint correctly refuses when the webhook secret is absent.
+- **Email verification is not wired up.** `emailAndPassword` does not require it, so enabling it is a product decision.
+- **`bun run check` does not include the smoke journey**, because Playwright needs a browser download. `bun run check:e2e` runs both; CI runs them in separate jobs.
+- **Rate-limit storage is in-memory.** Limits are per-process, so several instances multiply the effective limit and a restart clears it. Better Auth can store them in the database or Redis instead.
+- **The deferred capability backlog** — transactional email transport, file storage, background jobs, hosted observability, enterprise SSO and audit logging, deployment runbooks.
 
 ## Related documents
 
 - `CONTEXT.md` — glossary
 - `docs/agents/upstreaming.md` — how functionality built in a Rocket application is promoted into Rocket
 - `docs/protected-routes.md`
+- `docs/capabilities/billing.md`, `docs/capabilities/ai-chat.md`, `docs/capabilities/email.md`

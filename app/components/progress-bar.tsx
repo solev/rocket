@@ -49,7 +49,7 @@ export default function Progress(props: ProgressProps) {
 
   // Handle instant navigations where state may remain idle due to prefetch cache
   const lastPathRef = React.useRef<string>(
-    `${location.pathname}${location.search}${location.hash}`
+    `${location.pathname}${location.search}${location.hash}`,
   );
   React.useEffect(() => {
     const current = `${location.pathname}${location.search}${location.hash}`;
@@ -57,12 +57,21 @@ export default function Progress(props: ProgressProps) {
       lastPathRef.current = current;
       if (navigation.state === "idle") {
         NProgress.start();
-        const t = setTimeout(() => NProgress.done(), Math.max(120, config.speed));
+        const t = setTimeout(
+          () => NProgress.done(),
+          Math.max(120, config.speed),
+        );
         return () => clearTimeout(t);
       }
     }
     return;
-  }, [location.pathname, location.search, location.hash, navigation.state]);
+  }, [
+    location.pathname,
+    location.search,
+    location.hash,
+    navigation.state,
+    config.speed,
+  ]);
 
   React.useEffect(() => {
     NProgress.configure({
@@ -73,7 +82,14 @@ export default function Progress(props: ProgressProps) {
       trickle: config.trickle,
       trickleSpeed: config.trickleSpeed,
     });
-  }, []);
+  }, [
+    config.trickleSpeed,
+    config.showSpinner,
+    config.trickle,
+    config.startFrom,
+    config.speed,
+    config.easing,
+  ]);
 
   // https://unpkg.com/nprogress@0.2.0/nprogress.css
   return config.customCSS(`

@@ -11,7 +11,7 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { withAuthLoader } from "~/utils/guard.server";
-import { isPolarEnabled } from "~/lib/auth/auth.server";
+import { isBillingAvailable } from "~/capabilities/billing/billing.server";
 
 type BillingClientData = {
   active: boolean;
@@ -21,7 +21,7 @@ type BillingClientData = {
 
 export const loader = withAuthLoader(
   async ({ customerState }): Promise<BillingClientData> => {
-    if (!isPolarEnabled || !customerState) {
+    if (!isBillingAvailable() || !customerState) {
       return { active: false, billingEnabled: false };
     }
 
@@ -29,7 +29,7 @@ export const loader = withAuthLoader(
       active: Boolean(customerState.activeSubscriptions?.length),
       billingEnabled: true,
     };
-  }
+  },
 );
 
 export default function DashboardBilling({

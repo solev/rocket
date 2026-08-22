@@ -1,8 +1,26 @@
-import * as React from "react";
 import type { ShouldRevalidateFunctionArgs } from "react-router";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "~/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer, BarChart, Bar, Line, LineChart } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "~/components/ui/chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Line,
+} from "recharts";
 import { DataTable } from "~/components/dashboard/data-table";
 import { columns } from "~/components/dashboard/table-columns";
 
@@ -39,14 +57,39 @@ export default function DashboardHome() {
     <div className="space-y-8">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
-        <p className="text-sm text-muted-foreground">Key product & revenue metrics at a glance.</p>
+        <p className="text-sm text-muted-foreground">
+          Key product & revenue metrics at a glance.
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard title="MRR" value="$13.1k" change="▲ 6.2%" sub="vs last month" positive />
-        <MetricCard title="Active Users" value="2,318" change="▲ 4.1%" sub="7‑day avg" positive />
-        <MetricCard title="Churn" value="2.4%" change="▼ 0.3%" sub="net monthly" />
-        <MetricCard title="ARPU" value="$42.55" change="▲ 1.9%" sub="per active customer" positive />
+        <MetricCard
+          title="MRR"
+          value="$13.1k"
+          change="▲ 6.2%"
+          sub="vs last month"
+          positive
+        />
+        <MetricCard
+          title="Active Users"
+          value="2,318"
+          change="▲ 4.1%"
+          sub="7‑day avg"
+          positive
+        />
+        <MetricCard
+          title="Churn"
+          value="2.4%"
+          change="▼ 0.3%"
+          sub="net monthly"
+        />
+        <MetricCard
+          title="ARPU"
+          value="$42.55"
+          change="▲ 1.9%"
+          sub="per active customer"
+          positive
+        />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">
@@ -55,28 +98,62 @@ export default function DashboardHome() {
             <CardTitle>Revenue & Signups</CardTitle>
             <CardDescription>Trailing 6 months performance</CardDescription>
           </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{ revenue: { label: "Revenue", color: "hsl(var(--primary))" }, signups: { label: "Signups", color: "hsl(var(--chart-2))" } }}
-                className="h-64 aspect-auto"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueData} margin={{ left: 0, right: 0 }}>
-                    <defs>
-                      <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="month" tickLine={false} axisLine={false} />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                    <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" fill="url(#fillRevenue)" />
-                    <Line type="monotone" dataKey="signups" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
+          <CardContent>
+            <ChartContainer
+              config={{
+                revenue: { label: "Revenue", color: "hsl(var(--primary))" },
+                signups: { label: "Signups", color: "hsl(var(--chart-2))" },
+              }}
+              className="h-64 aspect-auto"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueData} margin={{ left: 0, right: 0 }}>
+                  <defs>
+                    <linearGradient
+                      id="fillRevenue"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="hsl(var(--primary))"
+                        stopOpacity={0.4}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="hsl(var(--primary))"
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-muted"
+                  />
+                  <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent />}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="hsl(var(--primary))"
+                    fill="url(#fillRevenue)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="signups"
+                    stroke="hsl(var(--chart-2))"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-4">
@@ -85,15 +162,27 @@ export default function DashboardHome() {
           </CardHeader>
           <CardContent>
             <ChartContainer
-              config={{ retained: { label: "Retained", color: "hsl(var(--chart-3))" } }}
+              config={{
+                retained: { label: "Retained", color: "hsl(var(--chart-3))" },
+              }}
               className="h-64 aspect-auto"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={retentionData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-muted"
+                  />
                   <XAxis dataKey="cohort" tickLine={false} axisLine={false} />
-                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                  <Bar dataKey="retained" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent />}
+                  />
+                  <Bar
+                    dataKey="retained"
+                    fill="hsl(var(--chart-3))"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -119,7 +208,19 @@ export function shouldRevalidate({ formMethod }: ShouldRevalidateFunctionArgs) {
   return !!formMethod && formMethod.toUpperCase() !== "GET";
 }
 
-function MetricCard({ title, value, change, sub, positive }: { title: string; value: string; change: string; sub: string; positive?: boolean }) {
+function MetricCard({
+  title,
+  value,
+  change,
+  sub,
+  positive,
+}: {
+  title: string;
+  value: string;
+  change: string;
+  sub: string;
+  positive?: boolean;
+}) {
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -127,10 +228,17 @@ function MetricCard({ title, value, change, sub, positive }: { title: string; va
         <CardTitle className="text-2xl">{value}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0 text-xs text-muted-foreground flex items-center gap-2">
-        <span className={positive ? "text-emerald-600 dark:text-emerald-500" : "text-destructive"}>{change}</span>
+        <span
+          className={
+            positive
+              ? "text-emerald-600 dark:text-emerald-500"
+              : "text-destructive"
+          }
+        >
+          {change}
+        </span>
         <span>{sub}</span>
       </CardContent>
     </Card>
   );
 }
-

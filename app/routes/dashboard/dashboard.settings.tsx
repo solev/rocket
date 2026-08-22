@@ -1,12 +1,10 @@
-import React, { useState, type FormEvent } from "react";
+import { useState } from "react";
 import type { ShouldRevalidateFunctionArgs } from "react-router";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import {
   useLoaderData,
   useNavigation,
   useActionData,
   Form,
-  useFormAction,
 } from "react-router";
 import {
   loadGeneralSettings,
@@ -50,17 +48,21 @@ export const action = withAuthAction(async ({ request, user }) => {
       openaiApiKey: (data.openaiApiKey as string) || undefined,
       anthropicApiKey: (data.anthropicApiKey as string) || undefined,
     });
-    return { ok: true, settings: updated };
-  } catch (e: any) {
-    return { ok: false, error: e.message };
+    return { ok: true, settings: updated } as const;
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : undefined,
+    } as const;
   }
 });
 
 export default function DashboardSettings() {
-  const data = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const settings = data?.settings as any;
-  const actionData = useActionData() as any;
+  const { settings } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const nav = useNavigation();
+  const actionError =
+    actionData && "error" in actionData ? actionData.error : undefined;
   const initial: GeneralSettingsState = {
     orgName: settings?.orgName || "",
     contactEmail: settings?.contactEmail || "",
@@ -75,7 +77,7 @@ export default function DashboardSettings() {
 
   function handleChange<K extends keyof GeneralSettingsState>(
     key: K,
-    value: GeneralSettingsState[K]
+    value: GeneralSettingsState[K],
   ) {
     setForm((f) => ({ ...f, [key]: value }));
   }
@@ -243,8 +245,8 @@ export default function DashboardSettings() {
           {saved && (
             <span className="text-xs text-green-600">Settings updated.</span>
           )}
-          {actionData?.error && (
-            <span className="text-xs text-red-600">{actionData.error}</span>
+          {actionError && (
+            <span className="text-xs text-red-600">{actionError}</span>
           )}
         </div>
         <Separator />

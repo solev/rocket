@@ -5,15 +5,16 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 // 2) Application-specific auth helpers
+import {
+  type PolarCustomerState,
+  getCustomerState,
+} from "~/capabilities/billing/billing.server";
 import { getUser, requireAuth } from "~/lib/auth/require-auth.server";
-import { isPolarEnabled, polarClient } from "~/lib/auth/auth.server";
 
 // Type helpers derived from our auth helpers (no `any`)
 export type RequireUser = Awaited<ReturnType<typeof requireAuth>>;
 export type OptionalUser = Awaited<ReturnType<typeof getUser>>;
-export type PolarCustomerState = Awaited<
-  ReturnType<typeof polarClient.customers.getStateExternal>
->;
+export type { PolarCustomerState };
 
 /**
  * withAuthLoader: wraps a loader so it runs only for authenticated users
@@ -25,20 +26,19 @@ export function withAuthLoader<
       user: RequireUser;
       /**
        * Resolved Polar customer state for the authenticated user,
-       * or `null` when Polar billing is disabled (see `isPolarEnabled`).
+       * or `null` when billing is unavailable.
        */
       customerState: PolarCustomerState | null;
-    }
-  ) => unknown
+    },
+  ) => unknown,
 >(fn: L): (args: LoaderFunctionArgs) => Promise<Awaited<ReturnType<L>>> {
   return async (args: LoaderFunctionArgs): Promise<Awaited<ReturnType<L>>> => {
-    // Authenticate first to get the user id to query Polar with
+    // Authenticate first to get the user id to query billing with
     const user = await requireAuth(args.request);
 
-    // Fetch Polar state now so it's available to downstream loaders without awaiting
-    const customerState = isPolarEnabled
-      ? await polarClient.customers.getStateExternal({ externalId: user.id })
-      : null;
+    // Resolves to null when billing is unavailable, so downstream loaders
+    // never branch on configuration themselves.
+    const customerState = await getCustomerState(user.id);
 
     return (await fn({
       ...args,
@@ -53,13 +53,13 @@ export function withAuthLoader<
  * Useful for public pages that are user-aware (e.g., navbar state).
  */
 export function withOptionalUserLoader<
-  L extends (args: LoaderFunctionArgs & { user: OptionalUser }) => unknown
->(
-  fn: L
-): (args: LoaderFunctionArgs) => Promise<Awaited<ReturnType<L>>> {
+  L extends (args: LoaderFunctionArgs & { user: OptionalUser }) => unknown,
+>(fn: L): (args: LoaderFunctionArgs) => Promise<Awaited<ReturnType<L>>> {
   return async (args: LoaderFunctionArgs): Promise<Awaited<ReturnType<L>>> => {
     const user = await getUser(args.request);
-    return (await fn({ ...args, user } as Parameters<L>[0])) as Awaited<ReturnType<L>>;
+    return (await fn({ ...args, user } as Parameters<L>[0])) as Awaited<
+      ReturnType<L>
+    >;
   };
 }
 
@@ -68,12 +68,12 @@ export function withOptionalUserLoader<
  * and injects a guaranteed `user` property.
  */
 export function withAuthAction<
-  A extends (args: ActionFunctionArgs & { user: RequireUser }) => unknown
->(
-  fn: A
-): (args: ActionFunctionArgs) => Promise<Awaited<ReturnType<A>>> {
+  A extends (args: ActionFunctionArgs & { user: RequireUser }) => unknown,
+>(fn: A): (args: ActionFunctionArgs) => Promise<Awaited<ReturnType<A>>> {
   return async (args: ActionFunctionArgs): Promise<Awaited<ReturnType<A>>> => {
     const user = await requireAuth(args.request);
-    return (await fn({ ...args, user } as Parameters<A>[0])) as Awaited<ReturnType<A>>;
+    return (await fn({ ...args, user } as Parameters<A>[0])) as Awaited<
+      ReturnType<A>
+    >;
   };
 }

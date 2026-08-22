@@ -7,7 +7,8 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "react-router";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
+import { env } from "~/lib/env/env.server";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -16,13 +17,18 @@ const THEME_COOKIE = "theme";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(
-    new RegExp("(?:^|; )" + THEME_COOKIE + "=([^;]+)")
-  );
+  const match = cookie.match(new RegExp(`(?:^|; )${THEME_COOKIE}=([^;]+)`));
   const raw = match ? decodeURIComponent(match[1]) : null;
   const theme: Theme | null =
     raw === "dark" || raw === "light" ? (raw as Theme) : null;
-  return { theme };
+
+  /**
+   * Vercel Web Analytics posts to an endpoint that only exists on Vercel.
+   * Anywhere else the injected script 404s on every page load, which React
+   * Router reports as an unmatched route, so it is treated like any other
+   * capability: on when the platform provides it, absent otherwise.
+   */
+  return { theme, isAnalyticsAvailable: Boolean(env.VERCEL) };
 }
 
 export const links: Route.LinksFunction = () => [
@@ -41,6 +47,7 @@ export const links: Route.LinksFunction = () => [
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useLoaderData<typeof loader>();
   const theme = data?.theme ?? null;
+  const isAnalyticsAvailable = data?.isAnalyticsAvailable ?? false;
   return (
     <html lang="en" className={theme === "dark" ? "dark" : undefined}>
       <head>
@@ -50,7 +57,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Analytics />
+        {isAnalyticsAvailable && <Analytics />}
         {children}
         <ScrollRestoration />
         <Scripts />
